@@ -1,0 +1,1782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Al Falah Islamic Online Institute</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Reem+Kufi:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --purple-900:#2A0E4A;
+    --purple-700:#3E1568;
+    --purple-600:#4E1C82;
+    --purple-500:#6B2CAE;
+    --gold-500:#E9AC1F;
+    --gold-400:#F4C544;
+    --gold-100:#FCEFCB;
+    --white:#FFFFFF;
+    --cream:#FBF8F2;
+    --charcoal-900:#1B1621;
+    --charcoal-700:#332B3D;
+    --charcoal-400:#6E6478;
+    --line:#E7E1EE;
+    --success:#2E9E5B;
+    --danger:#C4432F;
+    --bg: var(--cream);
+    --text: var(--charcoal-900);
+    --card: var(--white);
+    --shadow: 0 8px 24px rgba(42,14,74,0.10);
+    --radius-lg:22px;
+    --radius-md:16px;
+    --radius-sm:10px;
+    --gold-tint: var(--gold-100);
+    --gold-tint-text: #8A6708;
+    --danger-tint: #FBEAE6;
+    --danger-tint-text: var(--danger);
+    --success-tint: #E7F7EC;
+    --purple-tint: #EDE6FB;
+    color-scheme: light;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Manrope',system-ui,-apple-system,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overscroll-behavior:none;
+  }
+  .ar{font-family:'Amiri','Reem Kufi',serif; direction:rtl;}
+  .kufi{font-family:'Reem Kufi',sans-serif; direction:rtl;}
+  #app{
+    max-width:480px;
+    margin:0 auto;
+    min-height:100vh;
+    position:relative;
+    background:var(--bg);
+    overflow-x:hidden;
+  }
+  button{font-family:inherit; cursor:pointer;}
+  input,select,textarea{font-family:inherit;}
+  a{color:inherit;}
+  ::selection{background:var(--gold-400); color:var(--purple-900);}
+
+  /* ---------- Islamic geometric pattern (reused) ---------- */
+  .geo-pattern{
+    position:absolute; inset:0; opacity:.12; pointer-events:none;
+  }
+
+  /* ---------- SPLASH ---------- */
+  #splash{
+    position:fixed; inset:0; z-index:100;
+    background:radial-gradient(120% 90% at 50% 20%, var(--purple-600) 0%, var(--purple-900) 65%, #190831 100%);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    color:var(--white);
+    max-width:480px; margin:0 auto;
+    overflow:hidden;
+  }
+  .splash-star{
+    position:absolute;
+    width:520px; height:520px;
+    border:1px solid rgba(233,172,31,0.35);
+    border-radius:50%;
+    opacity:0;
+    animation:ringIn 1.6s ease-out forwards;
+  }
+  .splash-star.s2{width:400px;height:400px; animation-delay:.15s;}
+  .splash-star.s3{width:640px;height:640px; animation-delay:.3s;}
+  @keyframes ringIn{
+    0%{opacity:0; transform:scale(.8) rotate(0deg);}
+    50%{opacity:.5;}
+    100%{opacity:.28; transform:scale(1) rotate(20deg);}
+  }
+  .logo-wrap{
+    width:112px; height:112px; border-radius:50%;
+    background:var(--white); padding:5px;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 0 0 6px rgba(255,255,255,0.08), 0 20px 50px rgba(233,172,31,0.35);
+    opacity:0; transform:scale(.6);
+    animation:logoIn 1s cubic-bezier(.2,.8,.2,1) forwards .3s;
+    z-index:2; overflow:hidden;
+  }
+  @keyframes logoIn{
+    to{opacity:1; transform:scale(1);}
+  }
+  .logo-wrap img{width:100%; height:100%; object-fit:cover; border-radius:50%; display:block;}
+  .splash-title{
+    margin-top:26px; text-align:center; opacity:0;
+    animation:fadeUp .8s ease forwards 1.15s;
+    z-index:2;
+  }
+  .splash-title h1{
+    font-size:20px; letter-spacing:.3px; margin:0 0 6px; font-weight:800;
+  }
+  .splash-title .ur{font-size:16px; color:var(--gold-400); margin:0; font-weight:400;}
+  .splash-tag{
+    margin-top:14px; font-size:13px; color:rgba(255,255,255,0.75);
+    opacity:0; animation:fadeUp .8s ease forwards 1.7s; text-align:center; z-index:2;
+    padding:0 40px;
+  }
+  @keyframes fadeUp{
+    from{opacity:0; transform:translateY(10px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+  .splash-loader{
+    position:absolute; bottom:44px; width:120px; height:3px; background:rgba(255,255,255,0.15);
+    border-radius:3px; overflow:hidden; z-index:2;
+  }
+  .splash-loader::after{
+    content:''; position:absolute; left:0; top:0; bottom:0; width:40%;
+    background:var(--gold-400); border-radius:3px;
+    animation:loaderMove 2.6s ease-in-out forwards .2s;
+  }
+  @keyframes loaderMove{
+    0%{left:-40%;}
+    100%{left:100%;}
+  }
+
+  /* ---------- Shared screen scaffolding ---------- */
+  .screen{display:none; min-height:100vh; flex-direction:column;}
+  .screen.active{display:flex;}
+  .safe-top{padding-top:env(safe-area-inset-top);}
+
+  .brandbar{
+    display:flex; align-items:center; gap:10px;
+    padding:16px 20px; background:var(--purple-900); color:var(--white);
+  }
+  .brandbar .mark{
+    width:34px;height:34px;border-radius:10px;
+    background:linear-gradient(160deg, var(--gold-400), var(--gold-500));
+    display:flex;align-items:center;justify-content:center; flex-shrink:0;
+  }
+  .brandbar .mark svg{width:20px;height:20px;}
+  .brandbar .name{font-size:13px; font-weight:800; line-height:1.25;}
+  .brandbar .name span{display:block; font-weight:400; font-size:10.5px; color:var(--gold-400);}
+
+  /* ---------- AUTH ---------- */
+  #auth{background:var(--cream);}
+  .auth-hero{
+    background:radial-gradient(120% 100% at 50% 0%, var(--purple-600), var(--purple-900) 80%);
+    padding:34px 24px 54px; color:var(--white); text-align:center; position:relative;
+  }
+  .auth-hero .mark{
+    width:64px;height:64px;border-radius:50%; margin:0 auto 14px; padding:4px;
+    background:var(--white);
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 10px 30px rgba(233,172,31,.3);
+    overflow:hidden;
+  }
+  .auth-hero .mark img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;}
+  .auth-hero h1{font-size:17px; margin:0 0 4px; font-weight:800;}
+  .auth-hero p{margin:0; font-size:12px; color:rgba(255,255,255,.7);}
+
+  .auth-card{
+    background:var(--card); margin:-32px 18px 0; border-radius:var(--radius-lg);
+    box-shadow:var(--shadow); padding:22px 20px 26px; position:relative; z-index:3;
+  }
+  .tabbar{
+    display:flex; background:var(--gold-tint); border-radius:12px; padding:4px; margin-bottom:20px;
+  }
+  .tabbar button{
+    flex:1; border:none; background:transparent; padding:10px 0; font-size:13.5px; font-weight:700;
+    border-radius:9px; color:var(--charcoal-700); transition:all .2s;
+  }
+  .tabbar button.active{background:var(--purple-900); color:var(--white);}
+
+  .field{margin-bottom:14px;}
+  .field label{display:block; font-size:12px; font-weight:700; color:var(--charcoal-700); margin-bottom:6px;}
+  .field input, .field select{
+    width:100%; padding:12px 13px; border-radius:11px; border:1.5px solid var(--line);
+    font-size:14px; background:var(--cream); color:var(--text); outline:none; transition:border .15s;
+  }
+  .field input:focus, .field select:focus{border-color:var(--purple-500);}
+  .field-row{display:flex; gap:10px;}
+  .field-row .field{flex:1;}
+  .inline-opt{display:flex; align-items:center; justify-content:space-between; font-size:12px; margin:4px 0 18px; color:var(--charcoal-400);}
+  .inline-opt label{display:flex; align-items:center; gap:6px;}
+  .btn{
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    width:100%; border:none; border-radius:13px; padding:14px; font-size:14.5px; font-weight:800;
+    background:var(--gold-500); color:var(--purple-900); box-shadow:0 10px 24px rgba(233,172,31,.35);
+    transition:transform .12s;
+  }
+  .btn:active{transform:scale(.98);}
+  .btn.ghost{background:transparent; color:var(--purple-700); box-shadow:none; border:1.5px solid var(--line); font-weight:700;}
+  .btn.small{padding:9px 14px; font-size:12.5px; width:auto;}
+  .helper-text{font-size:11.5px; color:var(--charcoal-400); text-align:center; margin-top:14px;}
+  .helper-text b{color:var(--purple-700);}
+  .err{color:var(--danger); font-size:11.5px; margin-top:4px; display:none;}
+  .demo-note{
+    margin-top:16px; background:var(--gold-tint); border-radius:11px; padding:10px 12px;
+    font-size:11px; color:var(--gold-tint-text); line-height:1.5;
+  }
+
+  /* ---------- APP SHELL ---------- */
+  .app-header{
+    background:var(--purple-900); color:var(--white); padding:18px 20px 46px; position:relative; overflow:hidden;
+  }
+  .app-header .top-row{display:flex; align-items:center; justify-content:space-between; gap:10px; position:relative; z-index:2;}
+  .app-header .brand-mini{display:flex; align-items:center; gap:8px;}
+  .app-header .brand-mini .mark{width:32px;height:32px;border-radius:50%; padding:2px; background:var(--white); display:flex;align-items:center;justify-content:center; overflow:hidden; flex-shrink:0;}
+  .app-header .brand-mini .mark img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;}
+  .app-header .brand-mini .name{font-size:11px; font-weight:800; line-height:1.2;}
+  .icon-btn{
+    width:36px;height:36px; border-radius:11px; background:rgba(255,255,255,.1); border:none; color:var(--white);
+    display:flex; align-items:center; justify-content:center; position:relative;
+  }
+  .icon-btn .dot{position:absolute; top:6px; right:6px; width:7px; height:7px; border-radius:50%; background:var(--gold-400); border:1.5px solid var(--purple-900);}
+  .greeting{margin-top:20px; position:relative; z-index:2;}
+  .greeting h2{margin:0 0 3px; font-size:19px; font-weight:800;}
+  .greeting p{margin:0; font-size:12px; color:rgba(255,255,255,.65);}
+  .role-badge{
+    display:inline-block; margin-top:10px; font-size:10.5px; font-weight:700; letter-spacing:.2px;
+    background:rgba(233,172,31,.18); color:var(--gold-400); padding:4px 10px; border-radius:20px;
+  }
+  .founder-blink{
+    display:flex; align-items:center; gap:5px; margin-top:8px; font-size:10.5px; font-weight:700;
+    color:var(--gold-400); letter-spacing:.2px;
+  }
+  .founder-blink .dot-blink{
+    width:6px; height:6px; border-radius:50%; background:var(--gold-400); flex-shrink:0;
+    animation:founderBlink 1.4s ease-in-out infinite;
+  }
+  .founder-blink .txt{ animation:founderBlink 1.4s ease-in-out infinite; }
+  @keyframes founderBlink{
+    0%, 100%{opacity:1;}
+    50%{opacity:.25;}
+  }
+
+  .content-wrap{padding:0 18px 100px; margin-top:-30px; position:relative; z-index:3;}
+
+  .quick-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:20px;}
+  .quick-card{
+    background:var(--card); border-radius:16px; padding:14px 8px; text-align:center; box-shadow:var(--shadow);
+    display:flex; flex-direction:column; align-items:center; gap:8px; border:1px solid rgba(42,14,74,0.04);
+  }
+  .quick-card .qi{
+    width:38px;height:38px; border-radius:11px; display:flex; align-items:center; justify-content:center;
+    background:var(--purple-900);
+  }
+  .quick-card .qi svg{width:19px;height:19px; stroke:var(--gold-400);}
+  .quick-card span{font-size:10.5px; font-weight:700; color:var(--charcoal-700); line-height:1.25;}
+
+  .section-title{display:flex; align-items:center; justify-content:space-between; margin:22px 0 12px;}
+  .section-title h3{font-size:14.5px; margin:0; font-weight:800;}
+  .section-title a{font-size:11.5px; font-weight:700; color:var(--purple-600);}
+
+  .hadith-card{
+    background:linear-gradient(150deg, var(--purple-700), var(--purple-900));
+    color:var(--white); border-radius:var(--radius-lg); padding:20px; position:relative; overflow:hidden;
+  }
+  .hadith-card .eyebrow{font-size:10.5px; color:var(--gold-400); font-weight:800; margin-bottom:10px;}
+  .hadith-card .ar-text{font-size:19px; line-height:2; text-align:right; margin-bottom:12px;}
+  .hadith-card .tr-text{font-size:12.5px; line-height:1.7; color:rgba(255,255,255,.85); margin-bottom:10px;}
+  .hadith-card .src{font-size:10.5px; color:var(--gold-400); font-weight:700;}
+
+  .banner-card{
+    position:relative; border-radius:var(--radius-lg); overflow:hidden; margin-bottom:20px;
+    box-shadow:var(--shadow); background:var(--purple-900);
+  }
+  .banner-card img{width:100%; max-height:300px; object-fit:cover; display:block;}
+  .banner-card .badge{
+    position:absolute; top:12px; left:12px; background:var(--gold-500); color:var(--purple-900);
+    font-size:9.5px; font-weight:800; padding:4px 10px; border-radius:20px; letter-spacing:.3px;
+  }
+  .banner-card .close{
+    position:absolute; top:10px; right:10px; width:26px; height:26px; border-radius:50%;
+    background:rgba(0,0,0,0.45); border:none; display:flex; align-items:center; justify-content:center;
+  }
+  .banner-card .caption{
+    padding:12px 14px; font-size:12px; font-weight:700; color:var(--white);
+    background:linear-gradient(150deg, var(--purple-700), var(--purple-900));
+  }
+
+  .card{background:var(--card); border-radius:var(--radius-md); box-shadow:var(--shadow); padding:14px; margin-bottom:12px; border:1px solid rgba(42,14,74,0.04);}
+  .course-card{display:flex; gap:12px; align-items:center;}
+  .course-icon{
+    width:52px;height:52px;border-radius:14px; background:var(--gold-tint); display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .course-icon svg{width:26px;height:26px; stroke:var(--purple-700);}
+  .course-body{flex:1; min-width:0;}
+  .course-body h4{margin:0 0 3px; font-size:13.5px; font-weight:800;}
+  .course-body p{margin:0; font-size:11px; color:var(--charcoal-400);}
+  .meta-row{display:flex; gap:10px; margin-top:6px; font-size:10.5px; color:var(--charcoal-400); flex-wrap:wrap;}
+  .meta-row span{display:flex; align-items:center; gap:3px;}
+  .progress-bar{height:5px; background:var(--line); border-radius:6px; margin-top:8px; overflow:hidden;}
+  .progress-bar > div{height:100%; background:var(--gold-500); border-radius:6px;}
+  .pill{font-size:9.5px; font-weight:800; padding:3px 8px; border-radius:20px; background:var(--gold-tint); color:var(--gold-tint-text);}
+  .pill.live{background:var(--success-tint); color:var(--success);}
+  .pill.upcoming{background:var(--purple-tint); color:var(--purple-600);}
+
+  .class-card{position:relative;}
+  .class-top{display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;}
+  .class-top h4{margin:0; font-size:13.5px; font-weight:800;}
+  .join-btn{
+    background:var(--gold-500); color:var(--purple-900); border:none; font-weight:800; font-size:11.5px;
+    padding:8px 14px; border-radius:10px; margin-top:10px; width:100%;
+  }
+
+  .video-card{display:flex; gap:12px;}
+  .thumb{
+    width:96px; height:66px; border-radius:12px; background:linear-gradient(150deg,var(--purple-600),var(--purple-900));
+    flex-shrink:0; display:flex; align-items:center; justify-content:center; position:relative;
+  }
+  .thumb svg{width:22px;height:22px; fill:var(--white);}
+  .video-body{flex:1; min-width:0;}
+  .video-body h4{margin:0 0 3px; font-size:12.5px; font-weight:800; line-height:1.3;}
+  .video-body p{margin:0; font-size:10.5px; color:var(--charcoal-400);}
+
+  .material-card{display:flex; align-items:center; gap:12px;}
+  .file-icon{width:42px;height:42px; border-radius:11px; background:var(--purple-900); display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+  .file-icon svg{width:20px;height:20px; stroke:var(--gold-400);}
+
+  .empty{text-align:center; padding:40px 20px; color:var(--charcoal-400);}
+  .empty svg{width:44px;height:44px; margin-bottom:10px; stroke:var(--line);}
+  .empty p{font-size:12.5px; margin:0;}
+
+  /* Bottom Nav */
+  .bottom-nav{
+    position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:480px;
+    background:var(--white); border-top:1px solid var(--line); display:none; justify-content:space-around;
+    padding:9px 6px calc(9px + env(safe-area-inset-bottom)); z-index:40;
+  }
+  .nav-btn{
+    background:none; border:none; display:flex; flex-direction:column; align-items:center; gap:3px;
+    color:var(--charcoal-400); font-size:9.5px; font-weight:700; padding:4px 8px; border-radius:10px;
+  }
+  .nav-btn svg{width:20px;height:20px; stroke:var(--charcoal-400);}
+  .nav-btn.active{color:var(--purple-700);}
+  .nav-btn.active svg{stroke:var(--purple-700);}
+
+  .page-head{padding:18px 20px 4px;}
+  .page-head h2{margin:0 0 3px; font-size:18px; font-weight:800;}
+  .page-head p{margin:0; font-size:12px; color:var(--charcoal-400);}
+  .page-body{padding:14px 18px 100px;}
+
+  .search-bar{display:flex; align-items:center; gap:8px; background:var(--white); border:1.5px solid var(--line); border-radius:12px; padding:10px 13px; margin-bottom:14px;}
+  .search-bar svg{width:16px;height:16px; stroke:var(--charcoal-400); flex-shrink:0;}
+  .search-bar input{border:none; outline:none; background:transparent; font-size:13px; width:100%; color:var(--text);}
+
+  .chip-row{display:flex; gap:8px; overflow-x:auto; padding-bottom:4px; margin-bottom:14px; scrollbar-width:none;}
+  .chip-row::-webkit-scrollbar{display:none;}
+  .chip{flex-shrink:0; padding:8px 14px; border-radius:20px; background:var(--white); border:1.5px solid var(--line); font-size:11.5px; font-weight:700; color:var(--charcoal-700);}
+  .chip.active{background:var(--purple-900); border-color:var(--purple-900); color:var(--white);}
+
+  /* Modal / sheet */
+  .sheet-overlay{position:fixed; inset:0; background:rgba(20,10,35,0.5); z-index:60; display:none; align-items:flex-end; justify-content:center;}
+  .sheet-overlay.open{display:flex;}
+  .sheet{
+    background:var(--white); width:100%; max-width:480px; border-radius:22px 22px 0 0; padding:20px 20px calc(24px + env(safe-area-inset-bottom));
+    max-height:86vh; overflow-y:auto; animation:sheetUp .25s ease;
+  }
+  @keyframes sheetUp{from{transform:translateY(30px); opacity:.5;} to{transform:translateY(0); opacity:1;}}
+  .sheet-handle{width:38px; height:4px; background:var(--line); border-radius:4px; margin:0 auto 16px;}
+  .sheet h3{margin:0 0 14px; font-size:15.5px; font-weight:800;}
+  .close-x{position:absolute; top:16px; right:18px; background:var(--gold-tint); border:none; width:30px;height:30px; border-radius:9px; display:flex; align-items:center; justify-content:center;}
+
+  /* Admin/Teacher shells */
+  .role-tabs{display:flex; gap:8px; padding:14px 18px 0; overflow-x:auto; scrollbar-width:none;}
+  .role-tabs::-webkit-scrollbar{display:none;}
+  .role-tab{flex-shrink:0; padding:9px 15px; border-radius:12px; background:var(--white); border:1.5px solid var(--line); font-size:11.5px; font-weight:800; color:var(--charcoal-700);}
+  .role-tab.active{background:var(--purple-900); color:var(--white); border-color:var(--purple-900);}
+
+  .stat-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:6px;}
+  .stat-card{background:var(--card); border-radius:14px; padding:14px; box-shadow:var(--shadow);}
+  .stat-card .num{font-size:21px; font-weight:800; color:var(--purple-900);}
+  .stat-card .lbl{font-size:10.5px; color:var(--charcoal-400); font-weight:700; margin-top:2px;}
+
+  .list-row{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:12px 0; border-bottom:1px solid var(--line);}
+  .list-row:last-child{border-bottom:none;}
+  .list-row .info{flex:1; min-width:0;}
+  .list-row .info h5{margin:0 0 2px; font-size:12.5px; font-weight:800;}
+  .list-row .info p{margin:0; font-size:10.5px; color:var(--charcoal-400);}
+  .row-actions{display:flex; gap:6px; flex-shrink:0;}
+  .mini-btn{width:30px;height:30px; border-radius:9px; border:none; display:flex; align-items:center; justify-content:center;}
+  .mini-btn.edit{background:var(--gold-tint); }
+  .mini-btn.edit svg{stroke:var(--gold-tint-text);}
+  .mini-btn.del{background:var(--danger-tint);}
+  .mini-btn.del svg{stroke:var(--danger);}
+  .mini-btn svg{width:14px;height:14px;}
+
+  .status-dot{width:8px;height:8px;border-radius:50%; flex-shrink:0;}
+  .status-dot.approved{background:var(--success);}
+  .status-dot.pending{background:var(--gold-500);}
+  .status-dot.blocked{background:var(--danger);}
+
+  .toast{
+    position:fixed; bottom:90px; left:50%; transform:translateX(-50%) translateY(20px); opacity:0;
+    background:var(--purple-900); color:var(--white); padding:11px 18px; border-radius:12px; font-size:12.5px; font-weight:700;
+    z-index:80; transition:all .25s; pointer-events:none; box-shadow:0 10px 30px rgba(0,0,0,.25); text-align:center; max-width:80%;
+  }
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+  textarea.field-textarea{width:100%; padding:12px 13px; border-radius:11px; border:1.5px solid var(--line); font-size:13.5px; background:var(--cream); min-height:80px; resize:vertical; outline:none;}
+  textarea.field-textarea:focus{border-color:var(--purple-500);}
+
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#150C22; --text:#F1ECFA; --card:#241536; --line:#3A2A50; --charcoal-700:#D8CFEA; --charcoal-400:#A092BE; --cream:#1D1129;
+      --shadow:0 8px 24px rgba(0,0,0,.4);
+      --gold-tint: rgba(244,197,68,0.16); --gold-tint-text:#F4C544;
+      --danger-tint: rgba(196,67,47,0.22); --danger-tint-text:#FF9B87;
+      --success-tint: rgba(46,158,91,0.22); --purple-tint: rgba(107,44,174,0.30);
+      color-scheme: dark;
+    }
+    :root:not([data-theme="light"]) .field input, :root:not([data-theme="light"]) .field select, :root:not([data-theme="light"]) textarea.field-textarea{background:#1D1129; color:#F1ECFA; border-color:var(--line);}
+    :root:not([data-theme="light"]) .field input::placeholder, :root:not([data-theme="light"]) textarea.field-textarea::placeholder{color:#8577A3;}
+    :root:not([data-theme="light"]) .chip, :root:not([data-theme="light"]) .role-tab, :root:not([data-theme="light"]) .tabbar{background:#241536; border-color:var(--line);}
+    :root:not([data-theme="light"]) .search-bar{background:#241536; border-color:var(--line);}
+    :root:not([data-theme="light"]) .btn.ghost{border-color:var(--line); color:#D8CFEA;}
+    :root:not([data-theme="light"]) .quick-card, :root:not([data-theme="light"]) .card, :root:not([data-theme="light"]) .stat-card, :root:not([data-theme="light"]) .auth-card{border-color:var(--line);}
+    :root:not([data-theme="light"]) .demo-note{color:var(--gold-tint-text);}
+    :root:not([data-theme="light"]) .helper-text{color:var(--charcoal-400);}
+    :root:not([data-theme="light"]) .list-row{border-color:var(--line);}
+    :root:not([data-theme="light"]) .progress-bar{background:var(--line);}
+    :root:not([data-theme="light"]) .sheet{background:var(--card);}
+    :root:not([data-theme="light"]) .sheet-handle{background:var(--line);}
+  }
+  :root[data-theme="dark"]{
+    --bg:#150C22; --text:#F1ECFA; --card:#241536; --line:#3A2A50; --charcoal-700:#D8CFEA; --charcoal-400:#A092BE; --cream:#1D1129;
+    --gold-tint: rgba(244,197,68,0.16); --gold-tint-text:#F4C544;
+    --danger-tint: rgba(196,67,47,0.22); --danger-tint-text:#FF9B87;
+    --success-tint: rgba(46,158,91,0.22); --purple-tint: rgba(107,44,174,0.30);
+  }
+  :root[data-theme="dark"] .field input, :root[data-theme="dark"] .field select, :root[data-theme="dark"] textarea.field-textarea{background:#1D1129; color:#F1ECFA; border-color:var(--line);}
+  :root[data-theme="dark"] .chip, :root[data-theme="dark"] .role-tab, :root[data-theme="dark"] .tabbar{background:#241536; border-color:var(--line);}
+  :root[data-theme="dark"] .search-bar{background:#241536; border-color:var(--line);}
+  :root[data-theme="dark"] .btn.ghost{border-color:var(--line); color:#D8CFEA;}
+  :root[data-theme="dark"] .quick-card, :root[data-theme="dark"] .card, :root[data-theme="dark"] .stat-card, :root[data-theme="dark"] .auth-card{border-color:var(--line);}
+  :root[data-theme="dark"] .sheet{background:var(--card);}
+  :root[data-theme="dark"] .sheet-handle{background:var(--line);}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ================= SPLASH ================= -->
+  <div id="splash">
+    <div class="splash-star s1"></div>
+    <div class="splash-star s2"></div>
+    <div class="splash-star s3"></div>
+    <div class="logo-wrap">
+      <img class="app-logo-img" src="" alt="Al Falah Islamic Online Institute logo">
+    </div>
+    <div class="splash-title">
+      <h1>AL FALAH ISLAMIC<br>ONLINE INSTITUTE</h1>
+      <p class="ar ur">الفلاح اسلامک آن لائن انسٹیٹیوٹ</p>
+    </div>
+    <div class="splash-tag">Online Dini Taleem, Har Ghar Tak</div>
+    <div class="splash-loader"></div>
+  </div>
+
+  <!-- ================= AUTH ================= -->
+  <div class="screen" id="auth">
+    <div class="auth-hero">
+      <div class="mark">
+        <img class="app-logo-img" src="" alt="Al Falah Islamic Online Institute logo">
+      </div>
+      <h1>Al Falah Islamic Online Institute</h1>
+      <p>Online Dini Taleem, Har Ghar Tak</p>
+    </div>
+    <div class="auth-card">
+      <div class="tabbar">
+        <button class="active" id="tabLogin" onclick="switchAuthTab('login')">Log In</button>
+        <button id="tabRegister" onclick="switchAuthTab('register')">Register</button>
+      </div>
+
+      <!-- LOGIN FORM -->
+      <form id="loginForm" onsubmit="return handleLogin(event)">
+        <div class="field">
+          <label>Email or WhatsApp Number</label>
+          <input type="text" id="loginId" placeholder="you@example.com" required>
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input type="password" id="loginPass" placeholder="••••••••" required minlength="4">
+          <div class="err" id="loginErr">Please enter a valid email/number and password.</div>
+        </div>
+        <div class="inline-opt">
+          <label><input type="checkbox" id="rememberMe"> Remember me</label>
+          <a href="#" onclick="openForgotSheet();return false;">Forgot password?</a>
+        </div>
+        <button class="btn" type="submit">Log In</button>
+      </form>
+
+      <!-- REGISTER FORM -->
+      <form id="registerForm" style="display:none;" onsubmit="return handleRegister(event)">
+        <div class="field">
+          <label>Full Name</label>
+          <input type="text" id="regName" placeholder="Ahmed Khan" required>
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="regEmail" placeholder="you@example.com" required>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>WhatsApp Number</label>
+            <input type="tel" id="regPhone" placeholder="+92 3xx xxxxxxx" required>
+          </div>
+          <div class="field">
+            <label>City</label>
+            <input type="text" id="regCity" placeholder="Karachi" required>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Password</label>
+            <input type="password" id="regPass" placeholder="••••••••" required minlength="4">
+          </div>
+          <div class="field">
+            <label>Confirm Password</label>
+            <input type="password" id="regPass2" placeholder="••••••••" required minlength="4">
+          </div>
+        </div>
+        <div class="err" id="regErr">Passwords do not match.</div>
+        <div class="field">
+          <label>Registering As</label>
+          <select id="regRole" disabled>
+            <option value="student">Register as Student</option>
+          </select>
+        </div>
+        <button class="btn" type="submit" style="margin-top:6px;">Create Account</button>
+        <div class="demo-note">🔒 Teacher &amp; Admin accounts are created and approved by the Admin only — self-registration is restricted to students, matching the app's real access rules.</div>
+      </form>
+
+      <div class="helper-text">Prototype demo — try any email/number + password (4+ chars) to log in. Use the role switch below to preview Student, Teacher, or Admin dashboards.</div>
+
+      <div class="tabbar" style="margin-top:14px;">
+        <button class="demo-role active" data-role="student" onclick="setDemoRole('student')">Student</button>
+        <button class="demo-role" data-role="teacher" onclick="setDemoRole('teacher')">Teacher</button>
+        <button class="demo-role" data-role="admin" onclick="setDemoRole('admin')">Admin</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= STUDENT: HOME ================= -->
+  <div class="screen" id="home">
+    <div class="app-header">
+      <div class="top-row">
+        <div class="brand-mini">
+          <div class="mark"><img class="app-logo-img" src="" alt="Al Falah logo"></div>
+          <div class="name">AL FALAH<br><span>Islamic Online Institute</span></div>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button class="icon-btn" onclick="goTo('islamicUpdates')" title="Islamic Updates"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 3l1.8 4.9L19 9.5l-4 3.3 1.2 5.2L12 15l-4.2 3 1.2-5.2-4-3.3 5.2-1.6z"/></svg></button>
+          <button class="icon-btn" onclick="openNotifSheet()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg><span class="dot"></span></button>
+          <button class="icon-btn" onclick="goTo('profile')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 5-6 8-6s6.5 2 8 6"/></svg></button>
+        </div>
+      </div>
+      <div class="greeting">
+        <h2>Assalamu Alaikum, <span id="homeUserName">Ahmed</span></h2>
+        <p id="homeSubGreeting">Ready to continue your Dini Taleem today?</p>
+        <div class="role-badge" id="homeRoleBadge">STUDENT</div>
+        <div class="founder-blink"><span class="dot-blink"></span><span class="txt">Founder: Fareed Ahmed Khan</span></div>
+      </div>
+    </div>
+
+    <div class="content-wrap">
+      <div id="homeBanner-student" class="banner-card" style="display:none;"></div>
+      <div class="quick-grid">
+        <div class="quick-card" onclick="goTo('classes')">
+          <div class="qi"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M15 10l5-3v10l-5-3M4 6h9v12H4z" stroke="#F4C544"/></svg></div>
+          <span>My Classes</span>
+        </div>
+        <div class="quick-card" onclick="goTo('courses')">
+          <div class="qi"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20M4 4.5A2.5 2.5 0 016.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15z" stroke="#F4C544"/></svg></div>
+          <span>Courses</span>
+        </div>
+        <div class="quick-card" onclick="goTo('assignments')">
+          <div class="qi"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M9 12l2 2 4-4M5 6h14v14H5zM8 3h8" stroke="#F4C544"/></svg></div>
+          <span>Assignments</span>
+        </div>
+        <div class="quick-card" onclick="goTo('videos')">
+          <div class="qi"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M15 10l5-3v10l-5-3M4 6h9v12H4z" stroke="#F4C544"/></svg></div>
+          <span>Videos</span>
+        </div>
+        <div class="quick-card" onclick="goTo('material')">
+          <div class="qi"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M6 2h9l5 5v15H6zM15 2v5h5" stroke="#F4C544"/></svg></div>
+          <span>Books</span>
+        </div>
+        <div class="quick-card" onclick="openProgressSheet()">
+          <div class="qi"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 3v18h18M8 17V10m5 7V6m5 11v-4" stroke="#F4C544"/></svg></div>
+          <span>Progress</span>
+        </div>
+        <div class="quick-card" onclick="goTo('islamicUpdates')">
+          <div class="qi"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 3l1.8 4.9L19 9.5l-4 3.3 1.2 5.2L12 15l-4.2 3 1.2-5.2-4-3.3 5.2-1.6z" stroke="#F4C544"/></svg></div>
+          <span>Islamic Updates</span>
+        </div>
+      </div>
+
+      <div class="section-title">
+        <h3>آج کی حدیث · Daily Hadith</h3>
+      </div>
+      <div class="hadith-card">
+        <div class="eyebrow">TODAY'S HADITH</div>
+        <div class="ar-text" id="hadithAr">طَلَبُ الْعِلْمِ فَرِيضَةٌ عَلَى كُلِّ مُسْلِمٍ</div>
+        <div class="tr-text" id="hadithTr">Seeking knowledge is an obligation upon every Muslim.</div>
+        <div class="src" id="hadithSrc">— Sunan Ibn Majah</div>
+      </div>
+
+      <div class="section-title">
+        <h3>Continue Learning</h3>
+        <a onclick="goTo('courses')">See all</a>
+      </div>
+      <div id="homeCourseList"></div>
+
+      <div class="section-title">
+        <h3>Upcoming Classes</h3>
+        <a onclick="goTo('classes')">See all</a>
+      </div>
+      <div id="homeClassList"></div>
+    </div>
+  </div>
+
+  <!-- ================= COURSES ================= -->
+  <div class="screen" id="courses">
+    <div class="page-head">
+      <h2>Courses</h2>
+      <p>Explore our full Islamic curriculum</p>
+    </div>
+    <div class="page-body">
+      <div class="search-bar">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+        <input type="text" id="courseSearch" placeholder="Search courses..." oninput="renderCourses()">
+      </div>
+      <div id="courseList"></div>
+    </div>
+  </div>
+
+  <!-- ================= CLASSES ================= -->
+  <div class="screen" id="classes">
+    <div class="page-head">
+      <h2>Online Classes</h2>
+      <p>Your live class schedule</p>
+    </div>
+    <div class="page-body">
+      <div class="chip-row" id="classFilterChips">
+        <button class="chip active" data-f="all" onclick="filterClasses('all')">All</button>
+        <button class="chip" data-f="live" onclick="filterClasses('live')">Live Now</button>
+        <button class="chip" data-f="upcoming" onclick="filterClasses('upcoming')">Upcoming</button>
+      </div>
+      <div id="classList"></div>
+    </div>
+  </div>
+
+  <!-- ================= VIDEOS ================= -->
+  <div class="screen" id="videos">
+    <div class="page-head">
+      <h2>Video Lessons</h2>
+      <p>Watch and listen to educational content</p>
+    </div>
+    <div class="page-body">
+      <div id="videoList"></div>
+    </div>
+  </div>
+
+  <!-- ================= MATERIAL ================= -->
+  <div class="screen" id="material">
+    <div class="page-head" style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+      <div>
+        <h2>Books</h2>
+        <p>Notes, photos, documents &amp; audio shared by everyone</p>
+      </div>
+      <button class="btn small" style="flex-shrink:0;" onclick="openUploadContentSheet()">+ Upload</button>
+    </div>
+    <div class="page-body">
+      <div id="materialList"></div>
+    </div>
+  </div>
+
+  <!-- ================= ASSIGNMENTS ================= -->
+  <div class="screen" id="assignments">
+    <div class="page-head">
+      <h2>Assignments</h2>
+      <p>Track submissions and feedback</p>
+    </div>
+    <div class="page-body">
+      <div id="assignmentList"></div>
+    </div>
+  </div>
+
+  <!-- ================= ISLAMIC UPDATES ================= -->
+  <div class="screen" id="islamicUpdates">
+    <div class="page-head" style="display:flex; align-items:center; gap:10px;">
+      <button class="icon-btn" style="background:var(--gold-tint); flex-shrink:0;" onclick="goHome()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2A0E4A" stroke-width="2.2"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <div>
+        <h2 style="margin:0 0 2px;">Islamic Updates</h2>
+        <p style="margin:0;">Wallpapers, Status, Reels, Posters &amp; Ringtones</p>
+      </div>
+    </div>
+    <div class="page-body">
+      <div class="chip-row" id="updateFilterChips">
+        <button class="chip active" data-f="all" onclick="filterIslamicUpdates('all')">All</button>
+        <button class="chip" data-f="Wallpaper" onclick="filterIslamicUpdates('Wallpaper')">Wallpaper</button>
+        <button class="chip" data-f="Status" onclick="filterIslamicUpdates('Status')">Status</button>
+        <button class="chip" data-f="Reel" onclick="filterIslamicUpdates('Reel')">Reel</button>
+        <button class="chip" data-f="Poster" onclick="filterIslamicUpdates('Poster')">Instagram Poster</button>
+        <button class="chip" data-f="Ringtone" onclick="filterIslamicUpdates('Ringtone')">Ringtone</button>
+      </div>
+      <div id="adminUpdateAddBar" style="display:none; margin-bottom:14px;">
+        <button class="btn small" onclick="addIslamicUpdateSheet()">+ Upload New</button>
+      </div>
+      <div id="updateGrid" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;"></div>
+    </div>
+  </div>
+
+  <!-- ================= ABOUT / INTRODUCTION ================= -->
+  <div class="screen" id="about">
+    <div class="page-head" style="display:flex; align-items:center; gap:10px;">
+      <button class="icon-btn" style="background:var(--gold-tint); flex-shrink:0;" onclick="goTo('profile')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2A0E4A" stroke-width="2.2"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <div>
+        <h2 style="margin:0 0 2px;">About Us</h2>
+        <p style="margin:0;">Our story, mission &amp; founder</p>
+      </div>
+    </div>
+    <div class="page-body">
+      <div class="card" style="text-align:center;">
+        <img class="app-logo-img" src="" alt="Al Falah logo" style="width:68px;height:68px;border-radius:20px;object-fit:cover;margin:0 auto 10px; box-shadow:var(--shadow);">
+        <h4 style="margin:0 0 3px; font-size:15px; font-weight:800;">AL FALAH ISLAMIC ONLINE INSTITUTE</h4>
+        <p style="margin:0; font-size:12px; color:var(--gold-tint-text); font-weight:700;">Online Deeni Taleem, Har Ghar Tak</p>
+      </div>
+
+      <div class="card">
+        <p style="font-size:12.5px; line-height:1.9; margin:0 0 14px; color:var(--charcoal-700);">Al Falah Islamic Online Institute ek ilmi o tarbiyati idara hai, jiska bunyadi maqsad Qur'an-e-Kareem, Ahadees-e-Nabawi ﷺ aur Islami uloom ki mustanad taleem ko jadeed online zaraaye ke zariye har ghar tak pohanchana hai.</p>
+        <p style="font-size:12.5px; line-height:1.9; margin:0 0 14px; color:var(--charcoal-700);">Yeh idara is ehsaas ke saath qaim kiya gaya hai ke deeni taleem insaan ki infiradi aur ijtimaai zindagi ki bunyadi zaroorat hai. Hamara maqsad sirf maloomat faraham karna nahi, balke talaba ke dil-o-dimaagh mein imaan, ilm, amal, husn-e-akhlaq aur Islami shaoor ko parwan chadhana hai.</p>
+        <p style="font-size:12.5px; line-height:1.9; margin:0 0 14px; color:var(--charcoal-700);">Hum talaba ko Qur'an-e-Kareem, Tajweed, Hadees Shareef, Tafseer-e-Qur'an, Seerat-un-Nabi ﷺ, Islami tareekh, Aqaid, Islami saqafat aur Islami akhlaqiyat samet mukhtalif deeni uloom ki taleem faraham karne ki koshish karte hain, taake woh deen ko samajhne ke saath-saath apni amali zindagi mein bhi uski taleemat ko apnane ke qabil hon.</p>
+        <p style="font-size:12.5px; line-height:1.9; margin:0; color:var(--charcoal-700);">Hamara azm hai ke jadeed technology aur mo'assar taleemi nizaam ko baroo-e-kaar late hue aisi mayari deeni taleem faraham ki jaye jo asaan, munazzam, qabil-e-fahm aur mo'assar ho.</p>
+      </div>
+
+      <div class="card" style="background:linear-gradient(150deg, var(--purple-700), var(--purple-900)); color:var(--white);">
+        <div style="font-size:10.5px; color:var(--gold-400); font-weight:800; margin-bottom:8px; letter-spacing:.3px;">HAMARA MISSION</div>
+        <p style="font-size:12.5px; line-height:1.8; margin:0; color:rgba(255,255,255,.9);">Ilm-e-Deen ko aam karna, nasl-e-nau ki deeni aur akhlaqi tarbiyat karna, aur Qur'an-o-Sunnat ki roshni mein ek saleh, ba-akhlaq aur ba-shaoor muashray ki tashkeel mein apna kirdar ada karna.</p>
+      </div>
+
+      <div class="card">
+        <div style="font-size:10.5px; color:var(--purple-600); font-weight:800; margin-bottom:8px; letter-spacing:.3px;">HAMARI PEHCHAN</div>
+        <p style="font-size:13px; line-height:1.8; margin:0 0 14px; font-weight:700; color:var(--purple-700);">Al Falah — Ilm se Amal ki taraf, Taleem se Tarbiyat ki taraf.</p>
+        <div style="font-size:10.5px; color:var(--purple-600); font-weight:800; margin-bottom:8px; letter-spacing:.3px;">HAMARA PAIGHAM</div>
+        <p style="font-size:13px; line-height:1.8; margin:0; font-weight:700; color:var(--purple-700);">"Online Deeni Taleem, Har Ghar Tak."</p>
+      </div>
+
+      <div class="section-title"><h3>Founder</h3></div>
+      <div class="card" style="display:flex; align-items:center; gap:14px;">
+        <img id="founderPhotoImg" src="" alt="Founder Fareed Ahmed Khan" style="width:64px;height:64px;border-radius:18px;object-fit:cover; flex-shrink:0; box-shadow:var(--shadow);">
+        <div>
+          <h4 style="margin:0 0 2px; font-size:14px; font-weight:800;">Fareed Ahmed Khan</h4>
+          <p style="margin:0; font-size:11.5px; color:var(--charcoal-400);">Founder, Al Falah Islamic Online Institute</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= PROFILE ================= -->
+  <div class="screen" id="profile">
+    <div class="page-head" style="display:flex; align-items:center; gap:10px;">
+      <button class="icon-btn" style="background:var(--gold-tint); flex-shrink:0;" onclick="goBackFromProfile()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2A0E4A" stroke-width="2.2"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <div>
+        <h2 style="margin:0 0 2px;">Profile</h2>
+        <p style="margin:0;">Manage your account</p>
+      </div>
+    </div>
+    <div class="page-body">
+      <div class="card" style="display:flex; align-items:center; gap:14px;">
+        <div style="width:56px;height:56px;border-radius:16px;background:var(--purple-900);display:flex;align-items:center;justify-content:center; color:var(--gold-400); font-weight:800; font-size:18px;" id="profileAvatar">A</div>
+        <div style="flex:1; min-width:0;">
+          <h4 style="margin:0 0 2px; font-size:14.5px;" id="profileName">Ahmed Khan</h4>
+          <p style="margin:0; font-size:11.5px; color:var(--charcoal-400);" id="profileEmail">ahmed@example.com</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="field"><label>Full Name</label><input type="text" id="pfName" value="Ahmed Khan"></div>
+        <div class="field"><label>Phone / WhatsApp</label><input type="tel" id="pfPhone" value="+92 300 1234567"></div>
+        <div class="field"><label>Email</label><input type="email" id="pfEmail" value="ahmed@example.com"></div>
+        <button class="btn" onclick="showToast('Profile updated')">Save Changes</button>
+      </div>
+
+      <div class="card" style="text-align:center;">
+        <img class="app-logo-img" src="" alt="Al Falah logo" style="width:60px;height:60px;border-radius:18px;object-fit:cover;margin:0 auto 10px; box-shadow:var(--shadow);">
+        <h4 style="margin:0 0 3px; font-size:14px; font-weight:800;">Al Falah Islamic Online Institute</h4>
+        <p style="margin:0 0 12px; font-size:11.5px; color:var(--charcoal-400);">Online Dini Taleem, Har Ghar Tak</p>
+        <button class="btn small ghost" onclick="goTo('about')">Read Full Introduction &amp; Founder →</button>
+      </div>
+
+      <div class="section-title" style="margin-top:22px;"><h3>Contact &amp; About</h3></div>
+      <div class="card" style="padding:6px 14px;">
+        <a class="list-row" href="https://wa.me/7406341264" target="_blank" rel="noopener" style="text-decoration:none; color:inherit; gap:12px;">
+          <div class="file-icon" style="background:var(--success);"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M21 11.5a8.5 8.5 0 01-12.4 7.6L4 20l1-4.4A8.5 8.5 0 1121 11.5z"/><path d="M8.5 10.5c.3 2.5 2.5 4.7 5 5"/></svg></div>
+          <div class="info"><h5>WhatsApp</h5><p>7406341264</p></div>
+        </a>
+        <a class="list-row" href="mailto:alfalahislamiconlineinstitute1@gmail.com" style="text-decoration:none; color:inherit; gap:12px;">
+          <div class="file-icon" style="background:var(--purple-600);"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></div>
+          <div class="info"><h5>Email</h5><p style="word-break:break-all;">alfalahislamiconlineinstitute1@gmail.com</p></div>
+        </a>
+        <a class="list-row" href="https://www.instagram.com/al_falah_islamic_institute1?stkn=cjltNTdvdzFhYjZu" target="_blank" rel="noopener" style="text-decoration:none; color:inherit; gap:12px;">
+          <div class="file-icon" style="background:linear-gradient(140deg,#F4C544,#C4432F);"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="#fff" stroke="none"/></svg></div>
+          <div class="info"><h5>Instagram</h5><p>@al_falah_islamic_institute1</p></div>
+        </a>
+        <a class="list-row" href="https://t.me/alfalahislamiconlineinstitute1" target="_blank" rel="noopener" style="text-decoration:none; color:inherit; gap:12px;">
+          <div class="file-icon" style="background:#229ED9;"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/></svg></div>
+          <div class="info"><h5>Telegram Channel</h5><p>t.me/alfalahislamiconlineinstitute1</p></div>
+        </a>
+      </div>
+
+      <button class="btn ghost" style="margin-top:16px;" onclick="logout()">Log Out</button>
+    </div>
+  </div>
+
+  <!-- ================= ADMIN DASHBOARD ================= -->
+  <div class="screen" id="adminHome">
+    <div class="app-header" style="padding-bottom:30px;">
+      <div class="top-row">
+        <div class="brand-mini">
+          <div class="mark"><img class="app-logo-img" src="" alt="Al Falah logo"></div>
+          <div class="name">AL FALAH<br><span>Admin Control Panel</span></div>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button class="icon-btn" onclick="goTo('islamicUpdates')" title="Islamic Updates"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 3l1.8 4.9L19 9.5l-4 3.3 1.2 5.2L12 15l-4.2 3 1.2-5.2-4-3.3 5.2-1.6z"/></svg></button>
+          <button class="icon-btn" onclick="goTo('profile')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 5-6 8-6s6.5 2 8 6"/></svg></button>
+        </div>
+      </div>
+      <div class="greeting">
+        <h2>Assalamu Alaikum, Admin</h2>
+        <p>Full control over the institute platform</p>
+        <div class="role-badge">ADMINISTRATOR</div>
+      </div>
+    </div>
+    <div id="homeBanner-admin" class="banner-card" style="display:none; margin:14px 18px 0;"></div>
+    <div class="role-tabs" id="adminTabs">
+      <button class="role-tab active" data-t="overview" onclick="setAdminTab('overview')">Overview</button>
+      <button class="role-tab" data-t="users" onclick="setAdminTab('users')">Users</button>
+      <button class="role-tab" data-t="teachers" onclick="setAdminTab('teachers')">Teachers</button>
+      <button class="role-tab" data-t="courses" onclick="setAdminTab('courses')">Courses</button>
+      <button class="role-tab" data-t="books" onclick="setAdminTab('books')">Books</button>
+      <button class="role-tab" data-t="updates" onclick="goTo('islamicUpdates')">Islamic Updates</button>
+      <button class="role-tab" data-t="hadith" onclick="setAdminTab('hadith')">Hadith</button>
+      <button class="role-tab" data-t="content" onclick="setAdminTab('content')">Content</button>
+    </div>
+    <div class="page-body" id="adminBody" style="padding-top:16px;"></div>
+  </div>
+
+  <!-- ================= TEACHER DASHBOARD ================= -->
+  <div class="screen" id="teacherHome">
+    <div class="app-header" style="padding-bottom:30px;">
+      <div class="top-row">
+        <div class="brand-mini">
+          <div class="mark"><img class="app-logo-img" src="" alt="Al Falah logo"></div>
+          <div class="name">AL FALAH<br><span>Teacher Dashboard</span></div>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button class="icon-btn" onclick="goTo('islamicUpdates')" title="Islamic Updates"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 3l1.8 4.9L19 9.5l-4 3.3 1.2 5.2L12 15l-4.2 3 1.2-5.2-4-3.3 5.2-1.6z"/></svg></button>
+          <button class="icon-btn" onclick="goTo('profile')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 5-6 8-6s6.5 2 8 6"/></svg></button>
+        </div>
+      </div>
+      <div class="greeting">
+        <h2>Assalamu Alaikum, Ustadh</h2>
+        <p>Manage your classes and students</p>
+        <div class="role-badge">TEACHER</div>
+      </div>
+    </div>
+    <div id="homeBanner-teacher" class="banner-card" style="display:none; margin:14px 18px 0;"></div>
+    <div class="role-tabs" id="teacherTabs">
+      <button class="role-tab active" data-t="classes" onclick="setTeacherTab('classes')">My Classes</button>
+      <button class="role-tab" data-t="material" onclick="setTeacherTab('material')">Books</button>
+      <button class="role-tab" data-t="assignments" onclick="setTeacherTab('assignments')">Assignments</button>
+      <button class="role-tab" data-t="videos" onclick="setTeacherTab('videos')">Videos</button>
+    </div>
+    <div class="page-body" id="teacherBody" style="padding-top:16px;"></div>
+  </div>
+
+  <!-- Bottom nav (student) -->
+  <div class="bottom-nav" id="studentNav">
+    <button class="nav-btn active" data-p="home" onclick="goTo('home')">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 11l8-7 8 7v9a1 1 0 01-1 1h-4v-6H9v6H5a1 1 0 01-1-1z"/></svg>Home
+    </button>
+    <button class="nav-btn" data-p="courses" onclick="goTo('courses')">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20M4 4.5A2.5 2.5 0 016.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15z"/></svg>Courses
+    </button>
+    <button class="nav-btn" data-p="classes" onclick="goTo('classes')">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M15 10l5-3v10l-5-3M4 6h9v12H4z"/></svg>Classes
+    </button>
+    <button class="nav-btn" data-p="videos" onclick="goTo('videos')">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M10 9l5 3-5 3z"/></svg>Videos
+    </button>
+    <button class="nav-btn" data-p="material" onclick="goTo('material')">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M6 2h9l5 5v15H6zM15 2v5h5"/></svg>Books
+    </button>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<!-- ===== Generic bottom sheet ===== -->
+<div class="sheet-overlay" id="sheetOverlay" onclick="if(event.target===this)closeSheet()">
+  <div class="sheet">
+    <button class="close-x" onclick="closeSheet()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2A0E4A" stroke-width="2.5"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <div class="sheet-handle"></div>
+    <div id="sheetContent"></div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   AL FALAH ISLAMIC ONLINE INSTITUTE — FRONT-END PROTOTYPE
+   All data is mocked and stored in this browser's localStorage
+   (per-viewer only). No real backend, auth, or file storage.
+   ============================================================ */
+
+const DEFAULT_LOGO = "data:image/jpeg;base64,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";
+const FOUNDER_PHOTO = "data:image/jpeg;base64,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";
+const svgIcons = {
+  quran:'<svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20M4 4.5A2.5 2.5 0 016.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15z"/></svg>',
+  book:'<svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20M4 4.5A2.5 2.5 0 016.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15z"/></svg>',
+  star:'<svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 2l2.6 6.6L22 9l-5.5 4.6L18 22l-6-4-6 4 1.5-8.4L2 9l7.4-.4z"/></svg>',
+  pray:'<svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="5" r="2"/><path d="M12 7v6M8 13l4-2 4 2M6 21l6-8 6 8"/></svg>',
+  mic:'<svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="9" y="2" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v4"/></svg>',
+};
+const DEFAULT_STATE = {
+  logo: DEFAULT_LOGO,
+  hadith: {ar:"طَلَبُ الْعِلْمِ فَرِيضَةٌ عَلَى كُلِّ مُسْلِمٍ", tr:"Seeking knowledge is an obligation upon every Muslim.", src:"Sunan Ibn Majah"},
+  courses: [
+    {id:1, title:"Noorani Qaida", teacher:"Qari Bilal Ahmed", desc:"Foundational course for correct Arabic letter recognition and pronunciation.", duration:"3 months", timing:"Mon–Fri, 5:00 PM", students:42, progress:65, icon:"book"},
+    {id:2, title:"Quran Reading", teacher:"Qari Bilal Ahmed", desc:"Fluent Quran reading with proper makharij.", duration:"6 months", timing:"Mon–Fri, 6:00 PM", students:38, progress:40, icon:"quran"},
+    {id:3, title:"Quran Tajweed", teacher:"Hafiza Sumaira", desc:"Detailed rules of Tajweed for precise recitation.", duration:"8 months", timing:"Tue/Thu, 7:00 PM", students:29, progress:20, icon:"quran"},
+    {id:4, title:"Hifz-ul-Quran", teacher:"Hafiz Usman Tariq", desc:"Complete Quran memorization program with revision plan.", duration:"Ongoing", timing:"Daily, 4:00 PM", students:17, progress:12, icon:"quran"},
+    {id:5, title:"Duas & Salah", teacher:"Ustadha Ayesha", desc:"Essential daily duas and correct method of Salah.", duration:"2 months", timing:"Sat/Sun, 3:00 PM", students:51, progress:80, icon:"pray"},
+    {id:6, title:"Basic Islamic Knowledge", teacher:"Ustadh Imran", desc:"Fundamentals of Islamic beliefs and practices.", duration:"3 months", timing:"Mon/Wed, 5:30 PM", students:33, progress:55, icon:"book"},
+    {id:7, title:"Aqaaid", teacher:"Mufti Zubair", desc:"Core Islamic creed and beliefs explained simply.", duration:"3 months", timing:"Wed, 6:30 PM", students:22, progress:0, icon:"star"},
+    {id:8, title:"Islamic Adab & Akhlaaq", teacher:"Ustadha Ayesha", desc:"Manners and character building rooted in Sunnah.", duration:"2 months", timing:"Fri, 5:00 PM", students:40, progress:30, icon:"star"},
+    {id:9, title:"Stories of the Prophets", teacher:"Ustadh Imran", desc:"Life lessons from the Prophets (peace be upon them).", duration:"4 months", timing:"Sat, 4:00 PM", students:47, progress:10, icon:"book"},
+    {id:10, title:"Naat", teacher:"Qari Bilal Ahmed", desc:"Learn beautiful Naats with correct tarannum.", duration:"2 months", timing:"Sun, 3:00 PM", students:19, progress:0, icon:"mic"},
+  ],
+  classes: [
+    {id:1, course:"Hifz-ul-Quran", teacher:"Hafiz Usman Tariq", date:"Today", time:"4:00 PM", status:"live", link:"https://meet.google.com/demo-link"},
+    {id:2, course:"Quran Tajweed", teacher:"Hafiza Sumaira", date:"Today", time:"7:00 PM", status:"upcoming", link:"https://zoom.us/j/demo"},
+    {id:3, course:"Noorani Qaida", teacher:"Qari Bilal Ahmed", date:"Tomorrow", time:"5:00 PM", status:"upcoming", link:"https://meet.google.com/demo-link-2"},
+    {id:4, course:"Duas & Salah", teacher:"Ustadha Ayesha", date:"Sat", time:"3:00 PM", status:"upcoming", link:"https://zoom.us/j/demo2"},
+  ],
+  videos: [
+    {id:1, title:"Makharij al-Huroof Explained", teacher:"Qari Bilal Ahmed", desc:"Correct articulation points of Arabic letters.", duration:"12:40"},
+    {id:2, title:"Surah Al-Fatiha — Tajweed Breakdown", teacher:"Hafiza Sumaira", desc:"Line-by-line Tajweed rules applied.", duration:"18:05"},
+    {id:3, title:"How to Pray Salah Correctly", teacher:"Ustadha Ayesha", desc:"Step by step guide for beginners.", duration:"9:22"},
+    {id:4, title:"Story of Prophet Yusuf (AS) — Part 1", teacher:"Ustadh Imran", desc:"Lessons in patience and trust in Allah.", duration:"22:15"},
+  ],
+  materials: [
+    {id:1, title:"Noorani Qaida — Lesson 1 PDF", course:"Noorani Qaida", type:"PDF", uploader:{name:"Admin", role:"admin", email:"admin"}, fileData:null},
+    {id:2, title:"Tajweed Rules Summary Notes", course:"Quran Tajweed", type:"Notes", uploader:{name:"Admin", role:"admin", email:"admin"}, fileData:null},
+    {id:3, title:"40 Daily Duas Booklet", course:"Duas & Salah", type:"PDF", uploader:{name:"Admin", role:"admin", email:"admin"}, fileData:null},
+    {id:4, title:"Names of Allah — Illustrated", course:"Basic Islamic Knowledge", type:"Photo", uploader:{name:"Admin", role:"admin", email:"admin"}, fileData:null},
+  ],
+  assignments: [
+    {id:1, title:"Tajweed Rule Worksheet 3", course:"Quran Tajweed", due:"Sep 22", status:"pending"},
+    {id:2, title:"Memorize Surah Al-Mulk (1-10)", course:"Hifz-ul-Quran", due:"Sep 24", status:"submitted"},
+    {id:3, title:"Write 10 Daily Duas", course:"Duas & Salah", due:"Sep 18", status:"reviewed", feedback:"Excellent work, well written!"},
+  ],
+  students: [
+    {id:1, name:"Ahmed Khan", email:"ahmed@example.com", city:"Karachi", status:"approved"},
+    {id:2, name:"Fatima Noor", email:"fatima@example.com", city:"Lahore", status:"pending"},
+    {id:3, name:"Bilal Hussain", email:"bilal@example.com", city:"Islamabad", status:"approved"},
+    {id:4, name:"Zainab Ali", email:"zainab@example.com", city:"Multan", status:"blocked"},
+  ],
+  teachers: [
+    {id:1, name:"Qari Bilal Ahmed", subject:"Quran Reading & Naat", status:"active"},
+    {id:2, name:"Hafiza Sumaira", subject:"Tajweed", status:"active"},
+    {id:3, name:"Hafiz Usman Tariq", subject:"Hifz-ul-Quran", status:"active"},
+  ],
+  islamicUpdates: [
+    {id:1, title:"Ramadan Kareem Wallpaper", category:"Wallpaper", thumb:null, link:""},
+    {id:2, title:"Jumma Mubarak Status", category:"Status", thumb:null, link:""},
+    {id:3, title:"Surah Al-Fajr Recitation Reel", category:"Reel", thumb:null, link:""},
+    {id:4, title:"Al Falah Announcement Poster", category:"Poster", thumb:null, link:""},
+    {id:5, title:"Adhan Ringtone — Makkah", category:"Ringtone", thumb:null, link:""},
+    {id:6, title:"99 Names of Allah Wallpaper", category:"Wallpaper", thumb:null, link:""},
+  ],
+  banner: {image:null, caption:""},
+};
+
+let state = loadState();
+let currentUser = {name:"Ahmed Khan", email:"ahmed@example.com", role:"student"};
+let demoRole = "student";
+applyLogo();
+applyBanner();
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem('alfalah_state');
+    if(raw){
+      const parsed = JSON.parse(raw);
+      if(!parsed.logo) parsed.logo = DEFAULT_LOGO;
+      if(!parsed.islamicUpdates) parsed.islamicUpdates = JSON.parse(JSON.stringify(DEFAULT_STATE.islamicUpdates));
+      if(!parsed.banner) parsed.banner = {image:null, caption:""};
+      return parsed;
+    }
+  }catch(e){ console.warn('storage read failed', e); }
+  return JSON.parse(JSON.stringify(DEFAULT_STATE));
+}
+function applyLogo(){
+  document.querySelectorAll('.app-logo-img').forEach(img=>{ img.src = state.logo; });
+  const fp = document.getElementById('founderPhotoImg');
+  if(fp) fp.src = FOUNDER_PHOTO;
+}
+let bannerDismissed = false;
+function applyBanner(){
+  ['student','admin','teacher'].forEach(key=>{
+    const el = document.getElementById('homeBanner-'+key);
+    if(!el) return;
+    if(!state.banner || !state.banner.image || bannerDismissed){
+      el.style.display = 'none';
+      el.innerHTML = '';
+      return;
+    }
+    el.style.display = 'block';
+    el.innerHTML = `
+      <span class="badge">📢 ANNOUNCEMENT</span>
+      <button class="close" onclick="dismissBanner()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      <img src="${state.banner.image}" alt="Institute announcement poster">
+      ${state.banner.caption ? `<div class="caption">${state.banner.caption}</div>` : ''}
+    `;
+  });
+}
+function dismissBanner(){ bannerDismissed = true; applyBanner(); }
+function changeBannerSheet(){
+  openSheet(`<h3>Home Poster / Announcement</h3>
+    <p style="font-size:11.5px; color:var(--charcoal-400); margin-top:-8px;">Upload a reel/story-sized poster (vertical, e.g. 1080×1920). It appears on the Home screen for every Student, Teacher and Admin.</p>
+    <div class="field"><label>Poster Image</label><input type="file" id="bannerFile" accept="image/*"></div>
+    <div class="field"><label>Caption (optional)</label><input type="text" id="bannerCaption" placeholder="e.g. Eid holidays announcement"></div>
+    <button class="btn" onclick="saveBanner()">Publish to Home</button>
+    ${state.banner && state.banner.image ? `<button class="btn ghost" style="margin-top:10px;" onclick="removeBanner()">Remove Current Poster</button>` : ''}`);
+}
+function saveBanner(){
+  const fileInput = document.getElementById('bannerFile');
+  const file = fileInput && fileInput.files[0];
+  const caption = document.getElementById('bannerCaption').value.trim();
+  if(!file){ showToast('Choose a poster image first'); return; }
+  const reader = new FileReader();
+  reader.onload = (e)=>{
+    state.banner = {image:e.target.result, caption};
+    saveState(); bannerDismissed = false; applyBanner(); closeSheet();
+    const activeAdminTab = document.querySelector('#adminTabs .role-tab.active');
+    if(activeAdminTab && activeAdminTab.dataset.t==='content') renderAdminTab('content');
+    showToast('Poster published to Home for everyone');
+  };
+  reader.onerror = ()=> showToast('Could not read that image');
+  reader.readAsDataURL(file);
+}
+function removeBanner(){
+  state.banner = {image:null, caption:''};
+  saveState(); applyBanner(); closeSheet();
+  const activeAdminTab = document.querySelector('#adminTabs .role-tab.active');
+  if(activeAdminTab && activeAdminTab.dataset.t==='content') renderAdminTab('content');
+  showToast('Poster removed from Home');
+}
+function saveState(){
+  try{ localStorage.setItem('alfalah_state', JSON.stringify(state)); }
+  catch(e){ console.warn('storage write failed', e); }
+}
+
+/* ---------- Splash -> Auth ---------- */
+setTimeout(()=>{
+  const splash = document.getElementById('splash');
+  splash.style.transition = 'opacity .5s ease';
+  splash.style.opacity = '0';
+  setTimeout(()=>{
+    splash.style.display='none';
+    document.getElementById('auth').classList.add('active');
+  }, 500);
+}, 3200);
+
+/* ---------- Auth tabs ---------- */
+function switchAuthTab(tab){
+  document.getElementById('tabLogin').classList.toggle('active', tab==='login');
+  document.getElementById('tabRegister').classList.toggle('active', tab==='register');
+  document.getElementById('loginForm').style.display = tab==='login' ? 'block':'none';
+  document.getElementById('registerForm').style.display = tab==='register' ? 'block':'none';
+}
+function setDemoRole(role){
+  demoRole = role;
+  document.querySelectorAll('.demo-role').forEach(b=>b.classList.toggle('active', b.dataset.role===role));
+}
+
+function handleLogin(e){
+  e.preventDefault();
+  const id = document.getElementById('loginId').value.trim();
+  const pass = document.getElementById('loginPass').value;
+  const errEl = document.getElementById('loginErr');
+  if(!id || pass.length<4){ errEl.style.display='block'; return false; }
+  errEl.style.display='none';
+  currentUser = {
+    name: demoRole==='admin' ? 'Admin' : demoRole==='teacher' ? 'Ustadh Bilal' : (id.split('@')[0]||'Ahmed').replace(/^\w/, c=>c.toUpperCase()),
+    email: id.includes('@') ? id : (id+'@alfalah.demo'),
+    role: demoRole
+  };
+  enterApp();
+  return false;
+}
+function handleRegister(e){
+  e.preventDefault();
+  const p1 = document.getElementById('regPass').value;
+  const p2 = document.getElementById('regPass2').value;
+  const errEl = document.getElementById('regErr');
+  if(p1 !== p2){ errEl.style.display='block'; return false; }
+  errEl.style.display='none';
+  currentUser = {
+    name: document.getElementById('regName').value || 'New Student',
+    email: document.getElementById('regEmail').value,
+    role: 'student'
+  };
+  showToast('Registration submitted — awaiting Admin approval (demo)');
+  setTimeout(()=>enterApp(), 900);
+  return false;
+}
+function openForgotSheet(){
+  openSheet(`
+    <h3>Reset Password</h3>
+    <div class="field"><label>Registered Email or WhatsApp Number</label><input type="text" placeholder="you@example.com"></div>
+    <button class="btn" onclick="closeSheet(); showToast('Reset link sent (demo)')">Send Reset Link</button>
+  `);
+}
+
+function enterApp(){
+  document.getElementById('auth').classList.remove('active');
+  document.getElementById('profileName').textContent = currentUser.name;
+  document.getElementById('profileEmail').textContent = currentUser.email;
+  document.getElementById('profileAvatar').textContent = currentUser.name.charAt(0).toUpperCase();
+  document.getElementById('pfName').value = currentUser.name;
+  document.getElementById('pfEmail').value = currentUser.email;
+
+  if(currentUser.role==='admin'){
+    document.getElementById('adminHome').classList.add('active');
+    document.getElementById('studentNav').style.display='none';
+    renderAdminTab('overview');
+  } else if(currentUser.role==='teacher'){
+    document.getElementById('teacherHome').classList.add('active');
+    document.getElementById('studentNav').style.display='none';
+    renderTeacherTab('classes');
+  } else {
+    document.getElementById('home').classList.add('active');
+    document.getElementById('studentNav').style.display='flex';
+    document.getElementById('homeUserName').textContent = currentUser.name.split(' ')[0];
+    renderHome();
+  }
+}
+
+function logout(){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('studentNav').style.display='none';
+  document.getElementById('auth').classList.add('active');
+  switchAuthTab('login');
+  showToast('Logged out');
+}
+
+/* ---------- Navigation (student area) ---------- */
+function goHome(){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  if(currentUser.role==='admin'){
+    document.getElementById('adminHome').classList.add('active');
+  } else if(currentUser.role==='teacher'){
+    document.getElementById('teacherHome').classList.add('active');
+  } else {
+    document.getElementById('home').classList.add('active');
+    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active', b.dataset.p==='home'));
+  }
+}
+function goBackFromProfile(){ goHome(); }
+function goTo(page){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(page).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active', b.dataset.p===page));
+  const showNav = ['home','courses','classes','videos','material'].includes(page);
+  document.getElementById('studentNav').style.display = (currentUser.role==='student') ? (showNav?'flex':'flex') : 'none';
+  if(page==='courses') renderCourses();
+  if(page==='classes') renderClasses();
+  if(page==='videos') renderVideos();
+  if(page==='material') renderMaterial();
+  if(page==='assignments') renderAssignments();
+  if(page==='islamicUpdates') renderIslamicUpdates();
+  if(page==='about') applyLogo();
+  window.scrollTo(0,0);
+}
+
+/* ---------- Render: Home ---------- */
+function renderHome(){
+  document.getElementById('hadithAr').textContent = state.hadith.ar;
+  document.getElementById('hadithTr').textContent = state.hadith.tr;
+  document.getElementById('hadithSrc').textContent = '— ' + state.hadith.src;
+
+  const cl = document.getElementById('homeCourseList');
+  cl.innerHTML = state.courses.slice(0,2).map(c=>courseCardHTML(c)).join('');
+
+  const kl = document.getElementById('homeClassList');
+  kl.innerHTML = state.classes.slice(0,2).map(c=>classCardHTML(c)).join('');
+}
+
+function courseCardHTML(c){
+  return `<div class="card course-card" onclick="openCourseSheet(${c.id})">
+    <div class="course-icon">${svgIcons[c.icon]||svgIcons.book}</div>
+    <div class="course-body">
+      <h4>${c.title}</h4>
+      <p>${c.teacher}</p>
+      <div class="meta-row"><span>⏱ ${c.duration}</span><span>👥 ${c.students}</span></div>
+      <div class="progress-bar"><div style="width:${c.progress}%"></div></div>
+    </div>
+  </div>`;
+}
+function classCardHTML(c){
+  return `<div class="card class-card">
+    <div class="class-top">
+      <h4>${c.course}</h4>
+      <span class="pill ${c.status}">${c.status==='live'?'LIVE NOW':'UPCOMING'}</span>
+    </div>
+    <div class="meta-row"><span>👤 ${c.teacher}</span><span>📅 ${c.date}, ${c.time}</span></div>
+    <button class="join-btn" onclick="joinClass('${c.link}')">Join Class</button>
+  </div>`;
+}
+function joinClass(link){
+  showToast('Opening meeting link (demo) → ' + link);
+}
+
+/* ---------- Render: Courses ---------- */
+function renderCourses(){
+  const q = (document.getElementById('courseSearch')?.value||'').toLowerCase();
+  const list = state.courses.filter(c=>c.title.toLowerCase().includes(q));
+  const el = document.getElementById('courseList');
+  el.innerHTML = list.length ? list.map(c=>courseCardHTML(c)).join('') : emptyHTML('No courses found');
+}
+function openCourseSheet(id){
+  const c = state.courses.find(x=>x.id===id);
+  if(!c) return;
+  openSheet(`
+    <h3>${c.title}</h3>
+    <p style="font-size:12.5px; color:var(--charcoal-400); margin-top:-8px;">${c.desc}</p>
+    <div class="meta-row" style="margin:12px 0;">
+      <span>👤 ${c.teacher}</span><span>⏱ ${c.duration}</span><span>🕒 ${c.timing}</span><span>👥 ${c.students} students</span>
+    </div>
+    <div class="progress-bar" style="margin-bottom:16px;"><div style="width:${c.progress}%"></div></div>
+    <button class="btn" onclick="closeSheet(); showToast('Enrolled / Joined ${c.title}')">Join Course</button>
+  `);
+}
+
+/* ---------- Render: Classes ---------- */
+let classFilter = 'all';
+function filterClasses(f){
+  classFilter = f;
+  document.querySelectorAll('#classFilterChips .chip').forEach(b=>b.classList.toggle('active', b.dataset.f===f));
+  renderClasses();
+}
+function renderClasses(){
+  let list = state.classes;
+  if(classFilter!=='all') list = list.filter(c=>c.status===classFilter);
+  const el = document.getElementById('classList');
+  el.innerHTML = list.length ? list.map(c=>classCardHTML(c)).join('') : emptyHTML('No classes here yet');
+}
+
+/* ---------- Render: Videos ---------- */
+function renderVideos(){
+  const el = document.getElementById('videoList');
+  el.innerHTML = state.videos.map(v=>`
+    <div class="card video-card" onclick="showToast('Playing: ${v.title.replace(/'/g,"")} (demo)')">
+      <div class="thumb"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+      <div class="video-body">
+        <h4>${v.title}</h4>
+        <p>${v.teacher} · ${v.duration}</p>
+        <p style="margin-top:3px;">${v.desc}</p>
+      </div>
+    </div>`).join('');
+}
+
+/* ---------- Render: Material ---------- */
+const typeIconMeta = {
+  Photo:    {emoji:'🖼️', bg:'var(--purple-900)'},
+  Audio:    {emoji:'🎵', bg:'var(--purple-900)'},
+  Document: {emoji:'📄', bg:'var(--purple-900)'},
+  Notes:    {emoji:'📝', bg:'var(--purple-900)'},
+  Book:     {emoji:'📘', bg:'var(--purple-900)'},
+  PDF:      {emoji:'📕', bg:'var(--purple-900)'},
+  Audiobook:{emoji:'🎧', bg:'var(--purple-900)'},
+};
+function canManageContent(item){
+  if(currentUser.role==='admin') return true;
+  return !!(item.uploader && item.uploader.email === currentUser.email);
+}
+function renderMaterial(){
+  const el = document.getElementById('materialList');
+  if(!state.materials.length){ el.innerHTML = emptyHTML('No books or notes yet — tap Upload to add one'); return; }
+  el.innerHTML = state.materials.map(m=>{
+    const meta = typeIconMeta[m.type] || typeIconMeta.Book;
+    const canManage = canManageContent(m);
+    let previewHTML = '';
+    if(m.fileData && m.type==='Photo'){
+      previewHTML = `<img src="${m.fileData}" alt="${m.title}" style="width:100%;max-height:160px;object-fit:cover;border-radius:12px;margin-top:10px;">`;
+    } else if(m.fileData && m.type==='Audio'){
+      previewHTML = `<audio controls src="${m.fileData}" style="width:100%;margin-top:10px;"></audio>`;
+    }
+    const uploaderLine = m.uploader ? `Uploaded by ${m.uploader.name} · ${m.uploader.role.charAt(0).toUpperCase()+m.uploader.role.slice(1)}` : '';
+    return `<div class="card">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div class="file-icon" style="font-size:18px;">${meta.emoji}</div>
+        <div style="flex:1; min-width:0;">
+          <h4 style="margin:0 0 2px; font-size:12.5px; font-weight:800;">${m.title}</h4>
+          <p style="margin:0; font-size:10.5px; color:var(--charcoal-400);">${m.course} · ${m.type}</p>
+          ${uploaderLine ? `<p style="margin:2px 0 0; font-size:9.5px; color:var(--charcoal-400);">${uploaderLine}</p>` : ''}
+        </div>
+        <div class="row-actions">
+          ${m.fileData ? `<a class="mini-btn edit" href="${m.fileData}" download="${(m.fileName||m.title)}" target="_blank" title="Open / Download"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg></a>` : ''}
+          ${canManage ? `<button class="mini-btn del" onclick="deleteContent(${m.id})"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M6 6l12 12M18 6L6 18"/></svg></button>` : ''}
+        </div>
+      </div>
+      ${previewHTML}
+    </div>`;
+  }).join('');
+}
+function deleteContent(id){
+  const item = state.materials.find(m=>m.id===id);
+  if(item && !canManageContent(item)){ showToast('Only the uploader or Admin can remove this'); return; }
+  state.materials = state.materials.filter(m=>m.id!==id);
+  saveState(); renderMaterial();
+  const activeAdminTab = document.querySelector('#adminTabs .role-tab.active');
+  if(activeAdminTab && activeAdminTab.dataset.t==='books') renderAdminTab('books');
+  showToast('Removed');
+}
+function openUploadContentSheet(){
+  openSheet(`<h3>Upload Content</h3>
+    <p style="font-size:11.5px; color:var(--charcoal-400); margin-top:-8px;">Notes, photos, documents or audio — visible to everyone. Admin can manage/remove any upload; you can manage your own.</p>
+    <div class="field"><label>Title</label><input type="text" id="ucTitle" placeholder="e.g. My Tajweed Notes"></div>
+    <div class="field"><label>Course (optional)</label><select id="ucCourse">${state.courses.map(c=>`<option>${c.title}</option>`).join('')}</select></div>
+    <div class="field"><label>Type</label><select id="ucType">
+      <option>Notes</option><option>Photo</option><option>Document</option><option>Audio</option><option>Book</option><option>PDF</option>
+    </select></div>
+    <div class="field"><label>File (optional)</label><input type="file" id="ucFile" accept="image/*,audio/*,.pdf,.doc,.docx,.txt"></div>
+    <button class="btn" onclick="submitUploadContent()">Upload</button>`);
+}
+function submitUploadContent(){
+  const title = document.getElementById('ucTitle').value.trim();
+  if(!title){ showToast('Enter a title'); return; }
+  const course = document.getElementById('ucCourse').value;
+  const type = document.getElementById('ucType').value;
+  const fileInput = document.getElementById('ucFile');
+  const file = fileInput && fileInput.files[0];
+  const finish = (fileData, fileName)=>{
+    state.materials.unshift({
+      id:Date.now(), title, course, type,
+      uploader:{name:currentUser.name, role:currentUser.role, email:currentUser.email},
+      fileData: fileData||null, fileName: fileName||null
+    });
+    saveState(); closeSheet(); renderMaterial();
+    const activeAdminTab = document.querySelector('#adminTabs .role-tab.active');
+    if(activeAdminTab && activeAdminTab.dataset.t==='books') renderAdminTab('books');
+    showToast('Uploaded — visible to everyone now');
+  };
+  if(file){
+    const reader = new FileReader();
+    reader.onload = e=> finish(e.target.result, file.name);
+    reader.onerror = ()=> finish(null, null);
+    reader.readAsDataURL(file);
+  } else {
+    finish(null, null);
+  }
+}
+
+/* ---------- Render: Assignments ---------- */
+function renderAssignments(){
+  const el = document.getElementById('assignmentList');
+  el.innerHTML = state.assignments.map(a=>{
+    const statusMap = {pending:['upcoming','Pending'], submitted:['live','Submitted'], reviewed:['','Reviewed']};
+    const [cls,label] = statusMap[a.status]||['',a.status];
+    return `<div class="card">
+      <div class="class-top"><h4>${a.title}</h4><span class="pill ${cls}">${label.toUpperCase()}</span></div>
+      <div class="meta-row"><span>📘 ${a.course}</span><span>📅 Due ${a.due}</span></div>
+      ${a.feedback ? `<p style="font-size:11.5px; margin:8px 0 0; color:var(--charcoal-700); background:var(--gold-tint); padding:8px 10px; border-radius:9px;">💬 ${a.feedback}</p>` : ''}
+      ${a.status==='pending' ? `<button class="join-btn" onclick="showToast('Assignment submitted')">Submit Assignment</button>` : ''}
+    </div>`;
+  }).join('');
+}
+
+/* ---------- Islamic Updates (Wallpapers / Status / Reels / Posters / Ringtones) ---------- */
+const updateCategoryMeta = {
+  Wallpaper: {emoji:'🖼️', color:'linear-gradient(150deg,#6B2CAE,#2A0E4A)'},
+  Status:    {emoji:'💬', color:'linear-gradient(150deg,#E9AC1F,#8A6708)'},
+  Reel:      {emoji:'🎬', color:'linear-gradient(150deg,#2E9E5B,#1B4D30)'},
+  Poster:    {emoji:'📌', color:'linear-gradient(150deg,#C4432F,#6B2010)'},
+  Ringtone:  {emoji:'🎵', color:'linear-gradient(150deg,#3E1568,#150C22)'},
+};
+let updateFilter = 'all';
+function filterIslamicUpdates(cat){
+  updateFilter = cat;
+  document.querySelectorAll('#updateFilterChips .chip').forEach(b=>b.classList.toggle('active', b.dataset.f===cat));
+  renderIslamicUpdates();
+}
+function renderIslamicUpdates(){
+  document.getElementById('adminUpdateAddBar').style.display = (currentUser.role==='admin') ? 'block' : 'none';
+  let list = state.islamicUpdates;
+  if(updateFilter!=='all') list = list.filter(u=>u.category===updateFilter);
+  const grid = document.getElementById('updateGrid');
+  if(!list.length){ grid.style.display='block'; grid.innerHTML = emptyHTML('Nothing here yet'); return; }
+  grid.style.display='grid';
+  grid.innerHTML = list.map(u=>{
+    const meta = updateCategoryMeta[u.category] || updateCategoryMeta.Wallpaper;
+    const thumbHTML = u.thumb
+      ? `<img src="${u.thumb}" alt="${u.title}" style="width:100%;height:100%;object-fit:cover;">`
+      : `<div style="width:100%;height:100%;background:${meta.color};display:flex;align-items:center;justify-content:center;font-size:26px;">${meta.emoji}</div>`;
+    return `<div class="card" style="padding:0; overflow:hidden;">
+      <div style="width:100%; aspect-ratio:1/1; border-radius:16px 16px 0 0; overflow:hidden;">${thumbHTML}</div>
+      <div style="padding:10px;">
+        <span class="pill upcoming" style="margin-bottom:6px; display:inline-block;">${u.category.toUpperCase()}</span>
+        <h5 style="margin:2px 0 8px; font-size:11.5px; font-weight:800; line-height:1.3;">${u.title}</h5>
+        <div style="display:flex; gap:6px;">
+          <button class="btn small" style="flex:1; padding:8px 0; font-size:11px;" onclick="showToast('Downloading ${u.title.replace(/'/g,"")} (demo)')">Download</button>
+          ${currentUser.role==='admin' ? `<button class="mini-btn del" onclick="deleteIslamicUpdate(${u.id})"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M6 6l12 12M18 6L6 18"/></svg></button>` : ''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function addIslamicUpdateSheet(){
+  openSheet(`<h3>Upload Islamic Update</h3>
+    <div class="field"><label>Title</label><input type="text" id="iuTitle" placeholder="e.g. Eid Mubarak Wallpaper"></div>
+    <div class="field"><label>Category</label><select id="iuCategory">
+      <option>Wallpaper</option><option>Status</option><option>Reel</option><option>Poster</option><option>Ringtone</option>
+    </select></div>
+    <div class="field"><label>Thumbnail / File (optional)</label><input type="file" id="iuFile" accept="image/*"></div>
+    <button class="btn" onclick="addIslamicUpdate()">Upload</button>
+    <p style="font-size:11px; color:var(--charcoal-400); margin-top:10px;">Visible instantly to every Student and Teacher. Only Admin can upload or delete.</p>`);
+}
+function addIslamicUpdate(){
+  const title = document.getElementById('iuTitle').value.trim();
+  const category = document.getElementById('iuCategory').value;
+  if(!title){ showToast('Enter a title'); return; }
+  const fileInput = document.getElementById('iuFile');
+  const file = fileInput && fileInput.files[0];
+  const finish = (thumb)=>{
+    state.islamicUpdates.unshift({id:Date.now(), title, category, thumb: thumb||null, link:''});
+    saveState(); closeSheet(); updateFilter='all';
+    document.querySelectorAll('#updateFilterChips .chip').forEach(b=>b.classList.toggle('active', b.dataset.f==='all'));
+    renderIslamicUpdates(); showToast('Uploaded — visible to everyone now');
+  };
+  if(file){
+    const reader = new FileReader();
+    reader.onload = e=> finish(e.target.result);
+    reader.onerror = ()=> finish(null);
+    reader.readAsDataURL(file);
+  } else {
+    finish(null);
+  }
+}
+function deleteIslamicUpdate(id){
+  state.islamicUpdates = state.islamicUpdates.filter(u=>u.id!==id);
+  saveState(); renderIslamicUpdates(); showToast('Removed');
+}
+
+function emptyHTML(msg){
+  return `<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><circle cx="12" cy="12" r="9"/></svg><p>${msg}</p></div>`;
+}
+
+/* ---------- Sheets / Toasts ---------- */
+function openSheet(html){
+  document.getElementById('sheetContent').innerHTML = html;
+  document.getElementById('sheetOverlay').classList.add('open');
+}
+function closeSheet(){ document.getElementById('sheetOverlay').classList.remove('open'); }
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(()=>t.classList.remove('show'), 2400);
+}
+function openNotifSheet(){
+  openSheet(`<h3>Notifications</h3>
+    <div class="list-row"><div class="info"><h5>New class scheduled</h5><p>Hifz-ul-Quran class moved to 4:00 PM today</p></div></div>
+    <div class="list-row"><div class="info"><h5>Assignment reviewed</h5><p>Your Duas homework has feedback from Ustadha Ayesha</p></div></div>
+    <div class="list-row"><div class="info"><h5>Announcement</h5><p>Institute will be closed on Eid holidays</p></div></div>`);
+}
+function openProgressSheet(){
+  const rows = state.courses.filter(c=>c.progress>0).map(c=>`
+    <div class="list-row"><div class="info"><h5>${c.title}</h5><p>${c.progress}% complete</p></div></div>`).join('');
+  openSheet(`<h3>My Progress</h3>${rows}`);
+}
+
+/* ================= ADMIN PANEL ================= */
+function setAdminTab(t){
+  document.querySelectorAll('#adminTabs .role-tab').forEach(b=>b.classList.toggle('active', b.dataset.t===t));
+  renderAdminTab(t);
+}
+function renderAdminTab(t){
+  const el = document.getElementById('adminBody');
+  if(t==='overview'){
+    el.innerHTML = `
+      <div class="stat-grid">
+        <div class="stat-card"><div class="num">${state.students.length}</div><div class="lbl">Total Students</div></div>
+        <div class="stat-card"><div class="num">${state.teachers.length}</div><div class="lbl">Active Teachers</div></div>
+        <div class="stat-card"><div class="num">${state.courses.length}</div><div class="lbl">Courses</div></div>
+        <div class="stat-card"><div class="num">${state.classes.length}</div><div class="lbl">Classes Scheduled</div></div>
+      </div>
+      <div class="section-title"><h3>Pending Approvals</h3></div>
+      <div class="card">
+        ${state.students.filter(s=>s.status==='pending').map(s=>`
+          <div class="list-row">
+            <div class="info"><h5>${s.name}</h5><p>${s.email} · ${s.city}</p></div>
+            <div class="row-actions">
+              <button class="mini-btn edit" onclick="approveStudent(${s.id})"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M5 12l5 5L19 7"/></svg></button>
+              <button class="mini-btn del" onclick="removeStudent(${s.id})"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+            </div>
+          </div>`).join('') || '<p style="font-size:12px;color:var(--charcoal-400);padding:6px 0;">No pending approvals</p>'}
+      </div>
+      <div class="section-title"><h3>Quick Actions</h3></div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <button class="btn small" onclick="setAdminTab('hadith')">+ Add Hadith</button>
+        <button class="btn small ghost" onclick="setAdminTab('courses')">+ Add Course</button>
+        <button class="btn small ghost" onclick="openAnnouncementSheet()">📢 Announcement</button>
+      </div>`;
+  }
+  else if(t==='users'){
+    el.innerHTML = `<div class="section-title"><h3>Students (${state.students.length})</h3></div>
+      <div class="card">${state.students.map(s=>`
+        <div class="list-row">
+          <span class="status-dot ${s.status}"></span>
+          <div class="info"><h5>${s.name}</h5><p>${s.email} · ${s.city}</p></div>
+          <div class="row-actions">
+            <button class="mini-btn edit" onclick="editStudent(${s.id})"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg></button>
+            <button class="mini-btn del" onclick="removeStudent(${s.id})"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+          </div>
+        </div>`).join('')}</div>`;
+  }
+  else if(t==='teachers'){
+    el.innerHTML = `<div class="section-title"><h3>Teachers (${state.teachers.length})</h3><a onclick="addTeacherSheet()">+ Add</a></div>
+      <div class="card">${state.teachers.map(tc=>`
+        <div class="list-row">
+          <span class="status-dot approved"></span>
+          <div class="info"><h5>${tc.name}</h5><p>${tc.subject}</p></div>
+          <div class="row-actions">
+            <button class="mini-btn edit" onclick="showToast('Editing ${tc.name}')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg></button>
+            <button class="mini-btn del" onclick="removeTeacher(${tc.id})"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+          </div>
+        </div>`).join('')}</div>`;
+  }
+  else if(t==='courses'){
+    el.innerHTML = `<div class="section-title"><h3>Courses (${state.courses.length})</h3><a onclick="showToast('Add course form (demo)')">+ Add</a></div>
+      <div class="card">${state.courses.map(c=>`
+        <div class="list-row">
+          <div class="info"><h5>${c.title}</h5><p>${c.teacher} · ${c.students} students</p></div>
+          <div class="row-actions">
+            <button class="mini-btn edit" onclick="showToast('Editing ${c.title.replace(/'/g,"")}')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg></button>
+            <button class="mini-btn del" onclick="showToast('Delete requires confirmation (demo)')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+          </div>
+        </div>`).join('')}</div>`;
+  }
+  else if(t==='books'){
+    el.innerHTML = `<div class="section-title"><h3>Books &amp; Content (${state.materials.length})</h3><a onclick="adminAddBookSheet()">+ Add</a></div>
+      <p style="font-size:11.5px; color:var(--charcoal-400); margin:-6px 0 12px;">No limit. Includes books plus notes/photos/documents/audio uploaded by students &amp; teachers — Admin can remove any of it.</p>
+      <div class="card">${state.materials.map(m=>`
+        <div class="list-row">
+          <div class="file-icon" style="width:36px;height:36px;">${svgIcons.book}</div>
+          <div class="info"><h5>${m.title}</h5><p>${m.course} · ${m.type}${m.uploader ? ' · by '+m.uploader.name+' ('+m.uploader.role+')' : ''}</p></div>
+          <div class="row-actions">
+            <button class="mini-btn edit" onclick="showToast('Editing ${m.title.replace(/'/g,"")}')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg></button>
+            <button class="mini-btn del" onclick="deleteContent(${m.id})"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+          </div>
+        </div>`).join('') || '<p style="font-size:12px;color:var(--charcoal-400);padding:6px 0;">No books yet — add your first one</p>'}</div>`;
+  }
+  else if(t==='hadith'){
+    el.innerHTML = `<div class="section-title"><h3>Daily Hadith</h3></div>
+      <div class="card">
+        <div class="field"><label>Arabic Text</label><textarea class="field-textarea ar" id="adHadithAr">${state.hadith.ar}</textarea></div>
+        <div class="field"><label>Translation</label><textarea class="field-textarea" id="adHadithTr">${state.hadith.tr}</textarea></div>
+        <div class="field"><label>Reference / Source</label><input type="text" id="adHadithSrc" value="${state.hadith.src}"></div>
+        <button class="btn" onclick="saveHadith()">Save Hadith</button>
+      </div>`;
+  }
+  else if(t==='content'){
+    el.innerHTML = `<div class="section-title"><h3>App Content</h3></div>
+      <div class="card">
+        <div class="list-row">
+          <img class="app-logo-img" src="" alt="Current logo" style="width:38px;height:38px;border-radius:12px;object-fit:cover;flex-shrink:0;">
+          <div class="info"><h5>App Logo</h5><p>Shown on splash, login and every dashboard</p></div>
+          <button class="btn small ghost" onclick="changeLogoSheet()">Change</button>
+        </div>
+        <div class="list-row">
+          ${state.banner && state.banner.image ? `<img src="${state.banner.image}" alt="Current poster" style="width:38px;height:38px;border-radius:12px;object-fit:cover;flex-shrink:0;">` : `<div class="file-icon" style="width:38px;height:38px;">📢</div>`}
+          <div class="info"><h5>Home Poster / Announcement</h5><p>Reel-size poster shown on Home for everyone</p></div>
+          <button class="btn small ghost" onclick="changeBannerSheet()">${state.banner && state.banner.image ? 'Change' : 'Upload'}</button>
+        </div>
+        <div class="list-row"><div class="info"><h5>Testimonials</h5><p>Manage homepage testimonials</p></div><button class="btn small ghost" onclick="showToast('Manage testimonials (demo)')">Manage</button></div>
+        <div class="list-row"><div class="info"><h5>FAQ</h5><p>Frequently asked questions</p></div><button class="btn small ghost" onclick="showToast('Manage FAQ (demo)')">Manage</button></div>
+        <div class="list-row"><div class="info"><h5>About Section</h5><p>Institute description</p></div><button class="btn small ghost" onclick="showToast('Edit About (demo)')">Edit</button></div>
+        <div class="list-row"><div class="info"><h5>Contact Info</h5><p>Phone, email, address</p></div><button class="btn small ghost" onclick="showToast('Edit contact info (demo)')">Edit</button></div>
+        <div class="list-row"><div class="info"><h5>WhatsApp / Instagram / Telegram</h5><p>Social links</p></div><button class="btn small ghost" onclick="showToast('Edit social links (demo)')">Edit</button></div>
+        <div class="list-row"><div class="info"><h5>Class Meeting Links</h5><p>Update Zoom / Google Meet links</p></div><button class="btn small ghost" onclick="setAdminTab('courses')">Manage</button></div>
+      </div>`;
+    applyLogo();
+  }
+}
+function approveStudent(id){
+  const s = state.students.find(x=>x.id===id);
+  if(s){ s.status='approved'; saveState(); renderAdminTab('overview'); showToast(s.name+' approved'); }
+}
+function removeStudent(id){
+  state.students = state.students.filter(x=>x.id!==id);
+  saveState(); renderAdminTab(document.querySelector('#adminTabs .role-tab.active').dataset.t);
+  showToast('Student removed');
+}
+function editStudent(id){ showToast('Edit student form (demo)'); }
+function removeTeacher(id){
+  state.teachers = state.teachers.filter(x=>x.id!==id);
+  saveState(); renderAdminTab('teachers'); showToast('Teacher removed');
+}
+function addTeacherSheet(){
+  openSheet(`<h3>Add Teacher</h3>
+    <div class="field"><label>Full Name</label><input type="text" id="ntName" placeholder="Ustadh name"></div>
+    <div class="field"><label>Subject</label><input type="text" id="ntSubject" placeholder="e.g. Tajweed"></div>
+    <button class="btn" onclick="addTeacher()">Create Teacher Account</button>`);
+}
+function addTeacher(){
+  const name = document.getElementById('ntName').value.trim();
+  const subject = document.getElementById('ntSubject').value.trim();
+  if(!name) return;
+  state.teachers.push({id:Date.now(), name, subject:subject||'General', status:'active'});
+  saveState(); closeSheet(); renderAdminTab('teachers'); showToast('Teacher account created');
+}
+function changeLogoSheet(){
+  openSheet(`<h3>Change App Logo</h3>
+    <p style="font-size:11.5px; color:var(--charcoal-400); margin-top:-8px;">Upload a square image. It will replace the logo on the splash screen, login page and every dashboard.</p>
+    <div class="field"><label>Logo Image</label><input type="file" id="logoFile" accept="image/*"></div>
+    <button class="btn" onclick="applyNewLogo()">Save Logo</button>`);
+}
+function applyNewLogo(){
+  const fileInput = document.getElementById('logoFile');
+  const file = fileInput && fileInput.files[0];
+  if(!file){ showToast('Choose an image first'); return; }
+  const reader = new FileReader();
+  reader.onload = (e)=>{
+    state.logo = e.target.result;
+    saveState();
+    applyLogo();
+    closeSheet();
+    showToast('Logo updated across the app');
+  };
+  reader.onerror = ()=> showToast('Could not read that image');
+  reader.readAsDataURL(file);
+}
+function saveHadith(){
+  state.hadith = {
+    ar: document.getElementById('adHadithAr').value,
+    tr: document.getElementById('adHadithTr').value,
+    src: document.getElementById('adHadithSrc').value,
+  };
+  saveState(); showToast('Daily Hadith updated');
+}
+function openAnnouncementSheet(){
+  openSheet(`<h3>Publish Announcement</h3>
+    <div class="field"><label>Title</label><input type="text" id="anTitle" placeholder="Announcement title"></div>
+    <div class="field"><label>Message</label><textarea class="field-textarea" id="anBody" placeholder="Write your announcement..."></textarea></div>
+    <button class="btn" onclick="closeSheet(); showToast('Announcement published')">Publish</button>`);
+}
+
+/* ================= TEACHER PANEL ================= */
+function setTeacherTab(t){
+  document.querySelectorAll('#teacherTabs .role-tab').forEach(b=>b.classList.toggle('active', b.dataset.t===t));
+  renderTeacherTab(t);
+}
+function renderTeacherTab(t){
+  const el = document.getElementById('teacherBody');
+  if(t==='classes'){
+    el.innerHTML = `<div class="section-title"><h3>Assigned Classes</h3></div>` +
+      state.classes.slice(0,3).map(c=>`
+        <div class="card class-card">
+          <div class="class-top"><h4>${c.course}</h4><span class="pill ${c.status}">${c.status==='live'?'LIVE':'UPCOMING'}</span></div>
+          <div class="meta-row"><span>📅 ${c.date}, ${c.time}</span></div>
+          <div style="display:flex; gap:8px; margin-top:10px;">
+            <button class="join-btn" style="margin-top:0;" onclick="joinClass('${c.link}')">Join</button>
+            <button class="btn ghost small" onclick="showToast('Link change requires Admin permission')">Change Link</button>
+          </div>
+        </div>`).join('');
+  }
+  else if(t==='material'){
+    el.innerHTML = `<div class="section-title"><h3>Books &amp; Content</h3><a onclick="openUploadContentSheet()">+ Upload</a></div>
+      <p style="font-size:11px; color:var(--charcoal-400); margin:-8px 0 12px;">You can manage items you uploaded. Admin can manage all of it.</p>` +
+      (state.materials.map(m=>{
+        const canManage = canManageContent(m);
+        return `<div class="card material-card">
+          <div class="file-icon">${(typeIconMeta[m.type]||typeIconMeta.Book).emoji}</div>
+          <div style="flex:1;"><h4 style="margin:0 0 2px; font-size:12.5px; font-weight:800;">${m.title}</h4><p style="margin:0; font-size:10.5px; color:var(--charcoal-400);">${m.course} · ${m.type}${m.uploader ? ' · by '+m.uploader.name : ''}</p></div>
+          <div class="row-actions">
+            ${m.fileData ? `<a class="mini-btn edit" href="${m.fileData}" download="${(m.fileName||m.title)}" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg></a>` : ''}
+            ${canManage ? `<button class="mini-btn del" onclick="deleteContent(${m.id}); setTeacherTab('material')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M6 6l12 12M18 6L6 18"/></svg></button>` : ''}
+          </div>
+        </div>`;
+      }).join('') || '<p style="font-size:12px;color:var(--charcoal-400);padding:6px 0;">Nothing uploaded yet</p>');
+  }
+  else if(t==='assignments'){
+    el.innerHTML = `<div class="section-title"><h3>Student Submissions</h3><a onclick="createAssignmentSheet()">+ New</a></div>` +
+      state.assignments.map(a=>`
+        <div class="card">
+          <div class="class-top"><h4>${a.title}</h4><span class="pill ${a.status==='reviewed'?'':'upcoming'}">${a.status.toUpperCase()}</span></div>
+          <div class="meta-row"><span>📘 ${a.course}</span><span>📅 Due ${a.due}</span></div>
+          ${a.status!=='reviewed' ? `<button class="join-btn" onclick="giveFeedbackSheet('${a.title.replace(/'/g,"")}')">Review &amp; Give Feedback</button>` : `<p style="font-size:11.5px; margin:8px 0 0; color:var(--charcoal-700); background:var(--gold-tint); padding:8px 10px; border-radius:9px;">💬 ${a.feedback}</p>`}
+        </div>`).join('');
+  }
+  else if(t==='videos'){
+    el.innerHTML = `<div class="section-title"><h3>My Videos</h3><a onclick="uploadVideoSheet()">+ Upload</a></div>` +
+      state.videos.map(v=>`
+        <div class="card video-card">
+          <div class="thumb"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+          <div class="video-body"><h4>${v.title}</h4><p>${v.duration}</p></div>
+          <div class="row-actions" style="align-items:center;">
+            <button class="mini-btn edit" onclick="showToast('Editing video (demo)')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg></button>
+          </div>
+        </div>`).join('');
+  }
+}
+function adminAddBookSheet(){
+  openSheet(`<h3>Add Book</h3>
+    <p style="font-size:11.5px; color:var(--charcoal-400); margin-top:-8px;">Unlimited books can be added — no cap.</p>
+    <div class="field"><label>Book Title</label><input type="text" id="abTitle" placeholder="e.g. Bahishti Zewar"></div>
+    <div class="field"><label>Related Course</label><select id="abCourse">${state.courses.map(c=>`<option>${c.title}</option>`).join('')}</select></div>
+    <div class="field"><label>Type</label><select id="abType"><option>Book</option><option>PDF</option><option>Notes</option><option>Audiobook</option></select></div>
+    <button class="btn" onclick="addBookFromAdmin()">Add Book</button>`);
+}
+function addBookFromAdmin(){
+  const title = document.getElementById('abTitle').value.trim();
+  if(!title){ showToast('Enter a book title'); return; }
+  state.materials.unshift({id:Date.now(), title, course:document.getElementById('abCourse').value, type:document.getElementById('abType').value, uploader:{name:currentUser.name, role:'admin', email:currentUser.email}, fileData:null});
+  saveState(); closeSheet(); renderAdminTab('books'); showToast('Book added — visible to all students & teachers');
+}
+function deleteBook(id){ deleteContent(id); }
+function createAssignmentSheet(){
+  openSheet(`<h3>Create Assignment</h3>
+    <div class="field"><label>Title</label><input type="text" id="caTitle" placeholder="Assignment title"></div>
+    <div class="field"><label>Course</label><select id="caCourse">${state.courses.map(c=>`<option>${c.title}</option>`).join('')}</select></div>
+    <div class="field"><label>Description</label><textarea class="field-textarea" id="caDesc" placeholder="Instructions..."></textarea></div>
+    <div class="field"><label>Submission Date</label><input type="date" id="caDate"></div>
+    <button class="btn" onclick="closeSheet(); showToast('Assignment created and shared with students')">Create Assignment</button>`);
+}
+function giveFeedbackSheet(title){
+  openSheet(`<h3>Review: ${title}</h3>
+    <div class="field"><label>Feedback</label><textarea class="field-textarea" placeholder="Write feedback for the student..."></textarea></div>
+    <button class="btn" onclick="closeSheet(); showToast('Feedback sent to student')">Send Feedback</button>`);
+}
+function uploadVideoSheet(){
+  openSheet(`<h3>Upload Video</h3>
+    <div class="field"><label>Title</label><input type="text" id="uvTitle" placeholder="Video title"></div>
+    <div class="field"><label>Description</label><textarea class="field-textarea" id="uvDesc" placeholder="Short description"></textarea></div>
+    <div class="field"><label>Video URL</label><input type="text" placeholder="https://..."></div>
+    <button class="btn" onclick="uploadVideo()">Upload Video</button>`);
+}
+function uploadVideo(){
+  const title = document.getElementById('uvTitle').value.trim();
+  if(!title) return;
+  state.videos.unshift({id:Date.now(), title, teacher:currentUser.name, desc:document.getElementById('uvDesc').value||'', duration:'0:00'});
+  saveState(); closeSheet(); renderTeacherTab('videos'); showToast('Video uploaded');
+}
+</script>
+</body>
+</html>

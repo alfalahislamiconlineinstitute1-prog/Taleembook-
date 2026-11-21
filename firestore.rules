@@ -1,0 +1,401 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===============================================================
+    // Global Helper Functions
+    // ===============================================================
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        ('email' in request.auth.token
+          && request.auth.token.email == 'alfalahislamiconlineinstitute1@gmail.com'
+          && 'email_verified' in request.auth.token
+          && request.auth.token.email_verified == true)
+        || exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    function isValidId(id) {
+      return id is string
+        && id.size() >= 1
+        && id.size() <= 128
+        && !id.matches('.*(/|\\.\\.).*');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidTimestamp(ts) {
+      return ts is timestamp && ts <= request.time;
+    }
+
+    function isStringRange(val, minLen, maxLen) {
+      return val is string && val.size() >= minLen && val.size() <= maxLen;
+    }
+
+    function isOptionalString(data, field, maxLen) {
+      return !(field in data) || data[field] == null || (data[field] is string && data[field].size() <= maxLen);
+    }
+
+    // ===============================================================
+    // Entity Validators
+    // ===============================================================
+
+    function isValidUserProfile(data, userId) {
+      return data.keys().hasAll([
+          'userId', 'displayName', 'email', 'phone', 'roleView',
+          'hadithAr', 'hadithTr', 'hadithSrc', 'bannerCaption',
+          'seeded', 'createdAt', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'userId', 'displayName', 'email', 'phone', 'roleView',
+          'hadithAr', 'hadithTr', 'hadithSrc', 'bannerCaption',
+          'bannerImagePath', 'customLogoPath', 'seeded', 'createdAt', 'updatedAt'
+        ])
+        && data.userId == userId
+        && isStringRange(data.displayName, 1, 120)
+        && isStringRange(data.email, 0, 160)
+        && isStringRange(data.phone, 0, 40)
+        && data.roleView in ['student', 'teacher', 'admin']
+        && isStringRange(data.hadithAr, 0, 1000)
+        && isStringRange(data.hadithTr, 0, 1000)
+        && isStringRange(data.hadithSrc, 0, 200)
+        && isStringRange(data.bannerCaption, 0, 300)
+        && isOptionalString(data, 'bannerImagePath', 500)
+        && isOptionalString(data, 'customLogoPath', 500)
+        && data.seeded is bool
+        && isValidTimestamp(data.createdAt)
+        && isValidTimestamp(data.updatedAt);
+    }
+
+    function isValidCourse(data, userId) {
+      return data.keys().hasAll([
+          'userId', 'title', 'teacher', 'desc', 'duration', 'timing',
+          'students', 'progress', 'icon', 'createdAt', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'userId', 'title', 'teacher', 'desc', 'duration', 'timing',
+          'students', 'progress', 'icon', 'createdAt', 'updatedAt'
+        ])
+        && data.userId == userId
+        && isStringRange(data.title, 1, 150)
+        && isStringRange(data.teacher, 1, 120)
+        && isStringRange(data.desc, 0, 1000)
+        && isStringRange(data.duration, 0, 80)
+        && isStringRange(data.timing, 0, 120)
+        && data.students is int && data.students >= 0 && data.students <= 100000
+        && data.progress is int && data.progress >= 0 && data.progress <= 100
+        && isStringRange(data.icon, 1, 40)
+        && isValidTimestamp(data.createdAt)
+        && isValidTimestamp(data.updatedAt);
+    }
+
+    function isValidOnlineClass(data, userId) {
+      return data.keys().hasAll([
+          'userId', 'course', 'teacher', 'date', 'time', 'status', 'link', 'createdAt', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'userId', 'course', 'teacher', 'date', 'time', 'status', 'link', 'createdAt', 'updatedAt'
+        ])
+        && data.userId == userId
+        && isStringRange(data.course, 1, 150)
+        && isStringRange(data.teacher, 1, 120)
+        && isStringRange(data.date, 1, 60)
+        && isStringRange(data.time, 1, 60)
+        && data.status in ['live', 'upcoming']
+        && isStringRange(data.link, 0, 500)
+        && isValidTimestamp(data.createdAt)
+        && isValidTimestamp(data.updatedAt);
+    }
+
+    function isValidVideoLesson(data, userId) {
+      return data.keys().hasAll([
+          'userId', 'title', 'teacher', 'desc', 'duration', 'url', 'createdAt', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'userId', 'title', 'teacher', 'desc', 'duration', 'url', 'createdAt', 'updatedAt'
+        ])
+        && data.userId == userId
+        && isStringRange(data.title, 1, 200)
+        && isStringRange(data.teacher, 1, 120)
+        && isStringRange(data.desc, 0, 1000)
+        && isStringRange(data.duration, 0, 30)
+        && isStringRange(data.url, 0, 500)
+        && isValidTimestamp(data.createdAt)
+        && isValidTimestamp(data.updatedAt);
+    }
+
+    function isValidStudyMaterial(data, userId) {
+      return data.keys().hasAll([
+          'userId', 'title', 'course', 'type',
+          'uploaderName', 'uploaderRole', 'uploaderEmail', 'createdAt', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'userId', 'title', 'course', 'type',
+          'uploaderName', 'uploaderRole', 'uploaderEmail',
+          'filePath', 'fileName', 'createdAt', 'updatedAt'
+        ])
+        && data.userId == userId
+        && isStringRange(data.title, 1, 200)
+        && isStringRange(data.course, 1, 150)
+        && data.type in ['Notes', 'Photo', 'Document', 'Audio', 'Book', 'PDF', 'Audiobook']
+        && isStringRange(data.uploaderName, 0, 120)
+        && isStringRange(data.uploaderRole, 0, 40)
+        && isStringRange(data.uploaderEmail, 0, 160)
+        && isOptionalString(data, 'filePath', 500)
+        && isOptionalString(data, 'fileName', 260)
+        && isValidTimestamp(data.createdAt)
+        && isValidTimestamp(data.updatedAt);
+    }
+
+    function isValidAssignment(data, userId) {
+      return data.keys().hasAll([
+          'userId', 'title', 'course', 'due', 'status', 'description', 'createdAt', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'userId', 'title', 'course', 'due', 'status', 'feedback', 'description', 'createdAt', 'updatedAt'
+        ])
+        && data.userId == userId
+        && isStringRange(data.title, 1, 200)
+        && isStringRange(data.course, 1, 150)
+        && isStringRange(data.due, 1, 60)
+        && data.status in ['pending', 'submitted', 'reviewed']
+        && isOptionalString(data, 'feedback', 1000)
+        && isStringRange(data.description, 0, 1000)
+        && isValidTimestamp(data.createdAt)
+        && isValidTimestamp(data.updatedAt);
+    }
+
+    function isValidStudentRecord(data, userId) {
+      return data.keys().hasAll(['userId', 'name', 'email', 'city', 'status', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['userId', 'name', 'email', 'city', 'status', 'createdAt', 'updatedAt'])
+        && data.userId == userId
+        && isStringRange(data.name, 1, 120)
+        && isStringRange(data.email, 1, 160)
+        && isStringRange(data.city, 0, 120)
+        && data.status in ['approved', 'pending', 'blocked']
+        && isValidTimestamp(data.createdAt)
+        && isValidTimestamp(data.updatedAt);
+    }
+
+    function isValidTeacherRecord(data, userId) {
+      return data.keys().hasAll(['userId', 'name', 'subject', 'status', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['userId', 'name', 'subject', 'status', 'createdAt', 'updatedAt'])
+        && data.userId == userId
+        && isStringRange(data.name, 1, 120)
+        && isStringRange(data.subject, 1, 150)
+        && data.status in ['active', 'inactive']
+        && isValidTimestamp(data.createdAt)
+        && isValidTimestamp(data.updatedAt);
+    }
+
+    function isValidIslamicUpdate(data, userId) {
+      return data.keys().hasAll(['userId', 'title', 'category', 'link', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['userId', 'title', 'category', 'thumbPath', 'link', 'createdAt', 'updatedAt'])
+        && data.userId == userId
+        && isStringRange(data.title, 1, 200)
+        && data.category in ['Wallpaper', 'Status', 'Reel', 'Poster', 'Ringtone']
+        && isOptionalString(data, 'thumbPath', 500)
+        && isStringRange(data.link, 0, 500)
+        && isValidTimestamp(data.createdAt)
+        && isValidTimestamp(data.updatedAt);
+    }
+
+    function isValidNotification(data, userId) {
+      return data.keys().hasAll(['userId', 'title', 'body', 'createdAt'])
+        && data.keys().hasOnly(['userId', 'title', 'body', 'createdAt'])
+        && data.userId == userId
+        && isStringRange(data.title, 1, 150)
+        && isStringRange(data.body, 1, 1000)
+        && isValidTimestamp(data.createdAt);
+    }
+
+    function isValidAiChatMessage(data, userId) {
+      return data.keys().hasAll(['userId', 'sender', 'text', 'topic', 'createdAt'])
+        && data.keys().hasOnly(['userId', 'sender', 'text', 'topic', 'createdAt'])
+        && data.userId == userId
+        && data.sender in ['user', 'assistant']
+        && isStringRange(data.text, 1, 8000)
+        && isStringRange(data.topic, 0, 120)
+        && isValidTimestamp(data.createdAt);
+    }
+
+    // ===============================================================
+    // Role Collection (Admin Provisioned Out-of-Band)
+    // ===============================================================
+
+    match /admins/{uid} {
+      allow get: if isOwner(uid) || isAdmin();
+      allow list: if isAdmin();
+      allow write: if false;
+    }
+
+    // ===============================================================
+    // Owner-Isolated User Workspace Collections
+    // ===============================================================
+
+    match /users/{userId} {
+      allow get: if (isOwner(userId) || isAdmin()) && isValidId(userId);
+      allow list: if isAdmin();
+      allow create: if isOwner(userId) && isValidId(userId) && isValidUserProfile(incoming(), userId);
+      allow update: if isOwner(userId) && isValidId(userId)
+        && isValidUserProfile(incoming(), userId)
+        && incoming().userId == existing().userId
+        && incoming().createdAt == existing().createdAt
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'displayName', 'email', 'phone', 'roleView',
+          'hadithAr', 'hadithTr', 'hadithSrc',
+          'bannerCaption', 'bannerImagePath', 'customLogoPath',
+          'seeded', 'updatedAt'
+        ]);
+      allow delete: if (isOwner(userId) || isAdmin()) && isValidId(userId);
+
+      match /courses/{courseId} {
+        allow get: if (isOwner(userId) || isAdmin()) && isValidId(courseId);
+        allow list: if isOwner(userId) || isAdmin();
+        allow create: if isOwner(userId) && isValidId(courseId) && isValidCourse(incoming(), userId);
+        allow update: if isOwner(userId) && isValidId(courseId)
+          && isValidCourse(incoming(), userId)
+          && incoming().userId == existing().userId
+          && incoming().createdAt == existing().createdAt
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+            'title', 'teacher', 'desc', 'duration', 'timing', 'students', 'progress', 'icon', 'updatedAt'
+          ]);
+        allow delete: if (isOwner(userId) || isAdmin()) && isValidId(courseId);
+      }
+
+      match /classes/{classId} {
+        allow get: if (isOwner(userId) || isAdmin()) && isValidId(classId);
+        allow list: if isOwner(userId) || isAdmin();
+        allow create: if isOwner(userId) && isValidId(classId) && isValidOnlineClass(incoming(), userId);
+        allow update: if isOwner(userId) && isValidId(classId)
+          && isValidOnlineClass(incoming(), userId)
+          && incoming().userId == existing().userId
+          && incoming().createdAt == existing().createdAt
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+            'course', 'teacher', 'date', 'time', 'status', 'link', 'updatedAt'
+          ]);
+        allow delete: if (isOwner(userId) || isAdmin()) && isValidId(classId);
+      }
+
+      match /videos/{videoId} {
+        allow get: if (isOwner(userId) || isAdmin()) && isValidId(videoId);
+        allow list: if isOwner(userId) || isAdmin();
+        allow create: if isOwner(userId) && isValidId(videoId) && isValidVideoLesson(incoming(), userId);
+        allow update: if isOwner(userId) && isValidId(videoId)
+          && isValidVideoLesson(incoming(), userId)
+          && incoming().userId == existing().userId
+          && incoming().createdAt == existing().createdAt
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+            'title', 'teacher', 'desc', 'duration', 'url', 'updatedAt'
+          ]);
+        allow delete: if (isOwner(userId) || isAdmin()) && isValidId(videoId);
+      }
+
+      match /materials/{materialId} {
+        allow get: if (isOwner(userId) || isAdmin()) && isValidId(materialId);
+        allow list: if isOwner(userId) || isAdmin();
+        allow create: if isOwner(userId) && isValidId(materialId) && isValidStudyMaterial(incoming(), userId);
+        allow update: if isOwner(userId) && isValidId(materialId)
+          && isValidStudyMaterial(incoming(), userId)
+          && incoming().userId == existing().userId
+          && incoming().createdAt == existing().createdAt
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+            'title', 'course', 'type', 'filePath', 'fileName', 'updatedAt'
+          ]);
+        allow delete: if (isOwner(userId) || isAdmin()) && isValidId(materialId);
+      }
+
+      match /assignments/{assignmentId} {
+        allow get: if (isOwner(userId) || isAdmin()) && isValidId(assignmentId);
+        allow list: if isOwner(userId) || isAdmin();
+        allow create: if isOwner(userId) && isValidId(assignmentId) && isValidAssignment(incoming(), userId);
+        allow update: if isOwner(userId) && isValidId(assignmentId)
+          && isValidAssignment(incoming(), userId)
+          && incoming().userId == existing().userId
+          && incoming().createdAt == existing().createdAt
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+            'title', 'course', 'due', 'status', 'feedback', 'description', 'updatedAt'
+          ]);
+        allow delete: if (isOwner(userId) || isAdmin()) && isValidId(assignmentId);
+      }
+
+      match /students/{studentId} {
+        allow get: if (isOwner(userId) || isAdmin()) && isValidId(studentId);
+        allow list: if isOwner(userId) || isAdmin();
+        allow create: if isOwner(userId) && isValidId(studentId) && isValidStudentRecord(incoming(), userId);
+        allow update: if isOwner(userId) && isValidId(studentId)
+          && isValidStudentRecord(incoming(), userId)
+          && incoming().userId == existing().userId
+          && incoming().createdAt == existing().createdAt
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+            'name', 'email', 'city', 'status', 'updatedAt'
+          ]);
+        allow delete: if (isOwner(userId) || isAdmin()) && isValidId(studentId);
+      }
+
+      match /teachers/{teacherId} {
+        allow get: if (isOwner(userId) || isAdmin()) && isValidId(teacherId);
+        allow list: if isOwner(userId) || isAdmin();
+        allow create: if isOwner(userId) && isValidId(teacherId) && isValidTeacherRecord(incoming(), userId);
+        allow update: if isOwner(userId) && isValidId(teacherId)
+          && isValidTeacherRecord(incoming(), userId)
+          && incoming().userId == existing().userId
+          && incoming().createdAt == existing().createdAt
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+            'name', 'subject', 'status', 'updatedAt'
+          ]);
+        allow delete: if (isOwner(userId) || isAdmin()) && isValidId(teacherId);
+      }
+
+      match /islamic_updates/{updateId} {
+        allow get: if (isOwner(userId) || isAdmin()) && isValidId(updateId);
+        allow list: if isOwner(userId) || isAdmin();
+        allow create: if isOwner(userId) && isValidId(updateId) && isValidIslamicUpdate(incoming(), userId);
+        allow update: if isOwner(userId) && isValidId(updateId)
+          && isValidIslamicUpdate(incoming(), userId)
+          && incoming().userId == existing().userId
+          && incoming().createdAt == existing().createdAt
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+            'title', 'category', 'thumbPath', 'link', 'updatedAt'
+          ]);
+        allow delete: if (isOwner(userId) || isAdmin()) && isValidId(updateId);
+      }
+
+      match /notifications/{notificationId} {
+        allow get: if (isOwner(userId) || isAdmin()) && isValidId(notificationId);
+        allow list: if isOwner(userId) || isAdmin();
+        allow create: if isOwner(userId) && isValidId(notificationId) && isValidNotification(incoming(), userId);
+        allow update: if false;
+        allow delete: if (isOwner(userId) || isAdmin()) && isValidId(notificationId);
+      }
+
+      match /ai_chats/{messageId} {
+        allow get: if (isOwner(userId) || isAdmin()) && isValidId(messageId);
+        allow list: if isOwner(userId) || isAdmin();
+        allow create: if isOwner(userId) && isValidId(messageId) && isValidAiChatMessage(incoming(), userId);
+        allow update: if false;
+        allow delete: if (isOwner(userId) || isAdmin()) && isValidId(messageId);
+      }
+    }
+
+    // Default deny for everything else
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

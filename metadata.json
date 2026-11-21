@@ -1,0 +1,6 @@
+{
+  "name": "Al Falah",
+  "description": "Al Falah Islamic Online Institute — Online Dini Taleem, Har Ghar Tak. Courses, live online classes, video lessons, books & notes, assignments, daily Hadith, Islamic updates, and Student, Teacher & Admin dashboards.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

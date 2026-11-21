@@ -1,0 +1,229 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Authenticated user profile, dashboard mode preference, Daily Hadith, and Home banner settings.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "displayName": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "roleView": { "type": "string", "enum": ["student", "teacher", "admin"] },
+        "hadithAr": { "type": "string" },
+        "hadithTr": { "type": "string" },
+        "hadithSrc": { "type": "string" },
+        "bannerCaption": { "type": "string" },
+        "bannerImagePath": { "type": "string" },
+        "customLogoPath": { "type": "string" },
+        "seeded": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "displayName", "email", "phone", "roleView", "hadithAr", "hadithTr", "hadithSrc", "bannerCaption", "seeded", "createdAt", "updatedAt"]
+    },
+    "CourseDoc": {
+      "title": "CourseDoc",
+      "description": "Islamic institute course entry with teacher, schedule, student count, and completion progress.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "title": { "type": "string" },
+        "teacher": { "type": "string" },
+        "desc": { "type": "string" },
+        "duration": { "type": "string" },
+        "timing": { "type": "string" },
+        "students": { "type": "integer" },
+        "progress": { "type": "integer" },
+        "icon": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "title", "teacher", "desc", "duration", "timing", "students", "progress", "icon", "createdAt", "updatedAt"]
+    },
+    "OnlineClassDoc": {
+      "title": "OnlineClassDoc",
+      "description": "Scheduled live or upcoming online class.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "course": { "type": "string" },
+        "teacher": { "type": "string" },
+        "date": { "type": "string" },
+        "time": { "type": "string" },
+        "status": { "type": "string", "enum": ["live", "upcoming"] },
+        "link": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "course", "teacher", "date", "time", "status", "link", "createdAt", "updatedAt"]
+    },
+    "VideoLessonDoc": {
+      "title": "VideoLessonDoc",
+      "description": "Recorded educational Islamic video lesson.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "title": { "type": "string" },
+        "teacher": { "type": "string" },
+        "desc": { "type": "string" },
+        "duration": { "type": "string" },
+        "url": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "title", "teacher", "desc", "duration", "url", "createdAt", "updatedAt"]
+    },
+    "StudyMaterialDoc": {
+      "title": "StudyMaterialDoc",
+      "description": "Book, PDF, notes, photo, document, or audio study material.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "title": { "type": "string" },
+        "course": { "type": "string" },
+        "type": { "type": "string", "enum": ["Notes", "Photo", "Document", "Audio", "Book", "PDF", "Audiobook"] },
+        "uploaderName": { "type": "string" },
+        "uploaderRole": { "type": "string" },
+        "uploaderEmail": { "type": "string" },
+        "filePath": { "type": "string" },
+        "fileName": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "title", "course", "type", "uploaderName", "uploaderRole", "uploaderEmail", "createdAt", "updatedAt"]
+    },
+    "AssignmentDoc": {
+      "title": "AssignmentDoc",
+      "description": "Course assignment with submission status and teacher review feedback.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "title": { "type": "string" },
+        "course": { "type": "string" },
+        "due": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "submitted", "reviewed"] },
+        "feedback": { "type": "string" },
+        "description": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "title", "course", "due", "status", "description", "createdAt", "updatedAt"]
+    },
+    "StudentRecordDoc": {
+      "title": "StudentRecordDoc",
+      "description": "Student roster record managed in the Admin console.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "city": { "type": "string" },
+        "status": { "type": "string", "enum": ["approved", "pending", "blocked"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "name", "email", "city", "status", "createdAt", "updatedAt"]
+    },
+    "TeacherRecordDoc": {
+      "title": "TeacherRecordDoc",
+      "description": "Teacher roster record managed in the Admin console.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "name": { "type": "string" },
+        "subject": { "type": "string" },
+        "status": { "type": "string", "enum": ["active", "inactive"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "name", "subject", "status", "createdAt", "updatedAt"]
+    },
+    "IslamicUpdateDoc": {
+      "title": "IslamicUpdateDoc",
+      "description": "Islamic media update (Wallpaper, Status, Reel, Poster, or Ringtone).",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "title": { "type": "string" },
+        "category": { "type": "string", "enum": ["Wallpaper", "Status", "Reel", "Poster", "Ringtone"] },
+        "thumbPath": { "type": "string" },
+        "link": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "title", "category", "link", "createdAt", "updatedAt"]
+    },
+    "NotificationDoc": {
+      "title": "NotificationDoc",
+      "description": "Institute announcement or class notification.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "title": { "type": "string" },
+        "body": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "title", "body", "createdAt"]
+    },
+    "AiChatMessageDoc": {
+      "title": "AiChatMessageDoc",
+      "description": "User or Gemini AI Study Assistant message synced in Firestore.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "sender": { "type": "string", "enum": ["user", "assistant"] },
+        "text": { "type": "string" },
+        "topic": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "sender", "text", "topic", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Owner-isolated profile and institute workspace preferences."
+    },
+    "/users/{userId}/courses/{courseId}": {
+      "schema": { "$ref": "#/entities/CourseDoc" },
+      "description": "Owner-scoped Islamic curriculum courses."
+    },
+    "/users/{userId}/classes/{classId}": {
+      "schema": { "$ref": "#/entities/OnlineClassDoc" },
+      "description": "Owner-scoped online class schedule."
+    },
+    "/users/{userId}/videos/{videoId}": {
+      "schema": { "$ref": "#/entities/VideoLessonDoc" },
+      "description": "Owner-scoped video lessons."
+    },
+    "/users/{userId}/materials/{materialId}": {
+      "schema": { "$ref": "#/entities/StudyMaterialDoc" },
+      "description": "Owner-scoped books and uploaded study materials."
+    },
+    "/users/{userId}/assignments/{assignmentId}": {
+      "schema": { "$ref": "#/entities/AssignmentDoc" },
+      "description": "Owner-scoped course assignments and feedback."
+    },
+    "/users/{userId}/students/{studentId}": {
+      "schema": { "$ref": "#/entities/StudentRecordDoc" },
+      "description": "Owner-scoped student roster records."
+    },
+    "/users/{userId}/teachers/{teacherId}": {
+      "schema": { "$ref": "#/entities/TeacherRecordDoc" },
+      "description": "Owner-scoped teacher roster records."
+    },
+    "/users/{userId}/islamic_updates/{updateId}": {
+      "schema": { "$ref": "#/entities/IslamicUpdateDoc" },
+      "description": "Owner-scoped Islamic updates and media cards."
+    },
+    "/users/{userId}/notifications/{notificationId}": {
+      "schema": { "$ref": "#/entities/NotificationDoc" },
+      "description": "Owner-scoped announcements and notifications."
+    },
+    "/users/{userId}/ai_chats/{messageId}": {
+      "schema": { "$ref": "#/entities/AiChatMessageDoc" },
+      "description": "Owner-scoped Gemini AI Islamic Study Assistant conversation history."
+    }
+  }
+}

@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name">Al Falah</string>
+    <string name="institute_full_name">Al Falah Islamic Online Institute</string>
+    <string name="institute_upper_line1">AL FALAH ISLAMIC</string>
+    <string name="institute_upper_line2">ONLINE INSTITUTE</string>
+    <string name="institute_urdu_name">الفلاح اسلامک آن لائن انسٹیٹیوٹ</string>
+    <string name="institute_tagline">Online Dini Taleem, Har Ghar Tak</string>
+    <string name="institute_tagline_about">Online Deeni Taleem, Har Ghar Tak</string>
+    <string name="founder_label">Founder: Fareed Ahmed Khan</string>
+    <string name="founder_name">Fareed Ahmed Khan</string>
+    <string name="founder_role">Founder, Al Falah Islamic Online Institute</string>
+
+    <string name="about_para_1">Al Falah Islamic Online Institute ek ilmi o tarbiyati idara hai, jiska bunyadi maqsad Qur\'an-e-Kareem, Ahadees-e-Nabawi ﷺ aur Islami uloom ki mustanad taleem ko jadeed online zaraaye ke zariye har ghar tak pohanchana hai.</string>
+    <string name="about_para_2">Yeh idara is ehsaas ke saath qaim kiya gaya hai ke deeni taleem insaan ki infiradi aur ijtimaai zindagi ki bunyadi zaroorat hai. Hamara maqsad sirf maloomat faraham karna nahi, balke talaba ke dil-o-dimaagh mein imaan, ilm, amal, husn-e-akhlaq aur Islami shaoor ko parwan chadhana hai.</string>
+    <string name="about_para_3">Hum talaba ko Qur\'an-e-Kareem, Tajweed, Hadees Shareef, Tafseer-e-Qur\'an, Seerat-un-Nabi ﷺ, Islami tareekh, Aqaid, Islami saqafat aur Islami akhlaqiyat samet mukhtalif deeni uloom ki taleem faraham karne ki koshish karte hain, taake woh deen ko samajhne ke saath-saath apni amali zindagi mein bhi uski taleemat ko apnane ke qabil hon.</string>
+    <string name="about_para_4">Hamara azm hai ke jadeed technology aur mo\'assar taleemi nizaam ko baroo-e-kaar late hue aisi mayari deeni taleem faraham ki jaye jo asaan, munazzam, qabil-e-fahm aur mo\'assar ho.</string>
+    <string name="about_mission_title">HAMARA MISSION</string>
+    <string name="about_mission_body">Ilm-e-Deen ko aam karna, nasl-e-nau ki deeni aur akhlaqi tarbiyat karna, aur Qur\'an-o-Sunnat ki roshni mein ek saleh, ba-akhlaq aur ba-shaoor muashray ki tashkeel mein apna kirdar ada karna.</string>
+    <string name="about_pehchan_title">HAMARI PEHCHAN</string>
+    <string name="about_pehchan_body">Al Falah — Ilm se Amal ki taraf, Taleem se Tarbiyat ki taraf.</string>
+    <string name="about_paigham_title">HAMARA PAIGHAM</string>
+    <string name="about_paigham_body">\"Online Deeni Taleem, Har Ghar Tak.\"</string>
+
+    <string name="cd_institute_logo">Al Falah Islamic Online Institute logo</string>
+    <string name="cd_founder_photo">Founder Fareed Ahmed Khan</string>
+    <string name="cd_back">Go back</string>
+    <string name="cd_notifications">Notifications</string>
+    <string name="cd_profile">Profile</string>
+    <string name="cd_islamic_updates">Islamic Updates</string>
+    <string name="cd_close">Close</string>
+    <string name="cd_edit">Edit</string>
+    <string name="cd_delete">Delete</string>
+    <string name="cd_download">Download or open</string>
+    <string name="cd_approve">Approve</string>
+</resources>
